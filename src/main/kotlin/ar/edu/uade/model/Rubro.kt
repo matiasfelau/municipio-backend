@@ -1,4 +1,4 @@
-package ar.edu.uade.models
+package ar.edu.uade.model
 
 import org.jetbrains.exposed.sql.Table
 

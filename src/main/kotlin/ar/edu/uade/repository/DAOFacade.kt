@@ -1,6 +1,6 @@
-package ar.edu.uade.dao
+package ar.edu.uade.repository
 
-import ar.edu.uade.models.Rubro
+import ar.edu.uade.model.Rubro
 
 interface DAOFacade {
     suspend fun allRubros(): List<Rubro>

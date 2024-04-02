@@ -1,8 +1,8 @@
-package ar.edu.uade.dao
+package ar.edu.uade.repository
 
-import ar.edu.uade.dao.DAO.dbQuery
-import ar.edu.uade.models.Rubro
-import ar.edu.uade.models.Rubro.*
+import ar.edu.uade.repository.DAO.dbQuery
+import ar.edu.uade.model.Rubro
+import ar.edu.uade.model.Rubro.*
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.selectAll
