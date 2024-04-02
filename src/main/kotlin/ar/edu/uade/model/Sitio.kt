@@ -4,18 +4,20 @@ import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.javatime.time
 import java.util.Date
 
-data class Sitio(val idSitio: Int,
-                 val latitud: Float,
-                 val longitud: Float,
-                 val calle: String?,
-                 val numero: Int,
-                 val entreCalleA: String?,
-                 val entreCalleB: String?,
-                 val descripcion: String,
-                 val aCargoDe: String,
-                 val apertura: Date,
-                 val cierre: Date,
-                 val comentarios: String) {
+data class Sitio(
+    val idSitio: Int,
+    val latitud: Float,
+    val longitud: Float,
+    val calle: String?,
+    val numero: Int,
+    val entreCalleA: String?,
+    val entreCalleB: String?,
+    val descripcion: String,
+    val aCargoDe: String,
+    val apertura: Date,
+    val cierre: Date,
+    val comentarios: String
+) {
     public object Sitios : Table() {
         val idSitio = integer("idSitio").autoIncrement()
         val latitud = decimal("latitud", 9, 5)
