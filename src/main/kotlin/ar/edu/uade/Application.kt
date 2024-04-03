@@ -3,6 +3,7 @@ package ar.edu.uade
 import ar.edu.uade.plugins.*
 import io.ktor.server.application.*
 import ar.edu.uade.databases.MySQLSingleton
+import ar.edu.uade.security.*
 import ar.edu.uade.services.EmpleadoJWTService
 import ar.edu.uade.services.EmpleadoService
 import io.ktor.server.auth.*
@@ -16,6 +17,7 @@ fun Application.module() {
     val empleadoJwtService = EmpleadoJWTService(this, empleadoService)
     configureRouting(empleadoService, empleadoJwtService)
     configureSecurity(empleadoJwtService)
+    getSecuritySecretKey(environment.config)
     /*
     install(Authentication) {
         bearer {

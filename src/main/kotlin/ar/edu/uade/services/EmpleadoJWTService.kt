@@ -8,6 +8,7 @@ import ar.edu.uade.models.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.jwt.*
 import java.util.*
+import ar.edu.uade.security.*
 
 class EmpleadoJWTService (private val application: Application, private val empleadoService: EmpleadoService) {
     private val secret = getConfigProperty("jwt.secret")
