@@ -4,7 +4,6 @@ import ar.edu.uade.models.Empleado
 import ar.edu.uade.daos.EmpleadoDAOFacade
 import ar.edu.uade.daos.EmpleadoDAOFacadeCacheImpl
 import ar.edu.uade.daos.EmpleadoDAOFacadeMySQLImpl
-import ar.edu.uade.security.hash
 import io.ktor.server.config.*
 import java.io.File
 

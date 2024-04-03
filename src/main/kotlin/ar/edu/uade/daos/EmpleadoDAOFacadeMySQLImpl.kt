@@ -3,7 +3,6 @@ package ar.edu.uade.daos
 import ar.edu.uade.models.Empleado
 import ar.edu.uade.models.Empleado.Personal
 import ar.edu.uade.databases.MySQLSingleton.dbQuery
-import ar.edu.uade.security.hash
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
