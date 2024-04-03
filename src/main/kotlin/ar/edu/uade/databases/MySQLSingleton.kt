@@ -1,4 +1,4 @@
-package ar.edu.uade.repository
+package ar.edu.uade.databases
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
@@ -7,7 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
-object DatabaseSingleton {
+object MySQLSingleton {
     fun init(config: ApplicationConfig) {
         val database = Database.connect(
             createHikariDataSource(

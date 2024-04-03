@@ -1,4 +1,4 @@
-package ar.edu.uade.model
+package ar.edu.uade.models
 
 import java.io.Serializable
 import org.jetbrains.exposed.sql.Table

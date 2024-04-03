@@ -1,20 +1,24 @@
 package ar.edu.uade.plugins
 
-import kotlinx.coroutines.*
-import java.io.*
-import ar.edu.uade.repository.*
+import ar.edu.uade.routes.empleadoRouting
+import ar.edu.uade.services.EmpleadoJWTService
+import ar.edu.uade.services.EmpleadoService
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Application.configureRouting() {
-    val rubroDao: RubroDAOFacade = RubroDAOFacadeCacheImpl(
-        RubroDAOFacadeImpl(),
+fun Application.configureRouting(empleadoService: EmpleadoService, empleadoJWTService: EmpleadoJWTService) {
+    /*
+    val empleadoDAO: EmpleadoDAOFacade = EmpleadoDAOFacadeCacheImpl(
+        EmpleadoDAOFacadeImpl(),
         File(environment.config.property("storage.ehcacheFilePath").getString())
     ).apply { }
+
+     */
     routing {
         get("/") {
-            call.respondText(rubroDao.allRubros().first().descripcion.toString())
+            call.respondText("")
         }
+        empleadoRouting(empleadoService, empleadoJWTService)
     }
 }

@@ -1,4 +1,4 @@
-package ar.edu.uade.model
+package ar.edu.uade.models
 
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.javatime.time
