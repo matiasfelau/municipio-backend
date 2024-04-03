@@ -6,6 +6,7 @@ import ar.edu.uade.models.Empleado
 import ar.edu.uade.services.EmpleadoJWTService
 import ar.edu.uade.services.EmpleadoService
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
 import java.util.*
@@ -13,10 +14,9 @@ import java.util.*
 fun Route.empleadoRouting(empleadoService: EmpleadoService, empleadoJWTService: EmpleadoJWTService) {
     route("/empleado") {
         get {
-            val empleado = call.receive<EmpleadoLoginRequest>().let { empleadoService.findEmpleadoByLegajo(it) }
+            }
         }
     }
-}
 /*
 private fun EmpleadoRequest.toModel(): Empleado =
     Empleado(

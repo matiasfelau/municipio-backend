@@ -9,7 +9,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Route.empleadoAuthRouting(empleadoJwtService: EmpleadoJWTService) {
-    post {
+    post("/auth/empleado") {
         val dto = call.receive<EmpleadoLoginRequest>()
         val token: String? = empleadoJwtService.createJwtToken(dto)
         token?.let {

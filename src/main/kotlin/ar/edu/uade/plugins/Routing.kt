@@ -1,5 +1,6 @@
 package ar.edu.uade.plugins
 
+import ar.edu.uade.routes.empleadoAuthRouting
 import ar.edu.uade.routes.empleadoRouting
 import ar.edu.uade.services.EmpleadoJWTService
 import ar.edu.uade.services.EmpleadoService
@@ -20,5 +21,6 @@ fun Application.configureRouting(empleadoService: EmpleadoService, empleadoJWTSe
             call.respondText("")
         }
         empleadoRouting(empleadoService, empleadoJWTService)
+        empleadoAuthRouting(empleadoJWTService)
     }
 }
