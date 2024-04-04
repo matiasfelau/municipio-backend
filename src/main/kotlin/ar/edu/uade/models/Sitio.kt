@@ -2,10 +2,13 @@ package ar.edu.uade.models
 
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.javatime.time
+import java.time.LocalDate
+import java.time.LocalTime
 import java.util.Date
 
 data class Sitio(
     val idSitio: Int,
+    val nombre: String, //TODO AGREGADO POR NOSOTROS, VER RESPUESTA DE PROFESOR
     val latitud: Float,
     val longitud: Float,
     val calle: String?,
@@ -14,12 +17,13 @@ data class Sitio(
     val entreCalleB: String?,
     val descripcion: String,
     val aCargoDe: String,
-    val apertura: Date,
-    val cierre: Date,
+    val apertura: LocalTime,
+    val cierre: LocalTime,
     val comentarios: String
 ) {
     public object Sitios : Table() {
         val idSitio = integer("idSitio").autoIncrement()
+        val nombre = varchar("nombre", 150)
         val latitud = decimal("latitud", 9, 5)
         val longitud = decimal("longitud", 9, 5)
         val calle = varchar("calle", 150)
