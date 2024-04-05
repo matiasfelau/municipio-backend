@@ -1,7 +1,6 @@
 package ar.edu.uade.daos
 
 import ar.edu.uade.models.Empleado
-import ar.edu.uade.models.Vecino
 import org.ehcache.config.builders.CacheConfigurationBuilder
 import org.ehcache.config.builders.CacheManagerBuilder
 import org.ehcache.config.builders.ResourcePoolsBuilder
@@ -9,12 +8,14 @@ import org.ehcache.config.units.EntryUnit
 import org.ehcache.config.units.MemoryUnit
 import org.ehcache.impl.config.persistence.CacheManagerPersistenceConfiguration
 import java.io.File
+import ar.edu.uade.models.Credencial
 
-class VecinoDAOFacadeCacheImpl(private val delegate: VecinoDAOFacade, storagePath: File) : VecinoDAOFacade {
+
+class CredencialDAOFacadeCacheImpl(private val delegate: CredencialDAOFacade, storagePath: File) : CredencialDAOFacade {
     private val cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
         .with(CacheManagerPersistenceConfiguration(storagePath))
         .withCache(
-            "vecinosCache",
+            "credencialesCache",
             CacheConfigurationBuilder.newCacheConfigurationBuilder(
                 Int::class.javaObjectType,
                 Empleado::class.java,
@@ -26,8 +27,8 @@ class VecinoDAOFacadeCacheImpl(private val delegate: VecinoDAOFacade, storagePat
         )
         .build(true)
 
-    private val vecinosCache = cacheManager.getCache("vecinosCache", String::class.javaObjectType, Vecino::class.java)
+    private val credencialesCache = cacheManager.getCache("credencialesCache", String::class.javaObjectType, Credencial::class.java)
 
-    override suspend fun findVecinoByDocumento(documento: String): Vecino? = vecinosCache[documento] ?: delegate.findVecinoByDocumento(documento)
-        .also { vecino -> vecinosCache.put(documento, vecino) }
+    override suspend fun findCredencialByDocumento(documento: String): Credencial? = credencialesCache[documento] ?: delegate.findCredencialByDocumento(documento)
+        .also { credencial -> credencialesCache.put(documento, credencial) }
 }

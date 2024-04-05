@@ -1,18 +1,24 @@
 package ar.edu.uade.daos
 
+import ar.edu.uade.databases.MySQLSingleton.dbQuery
+import ar.edu.uade.models.Clasificacion
 import ar.edu.uade.models.Empleado
 import ar.edu.uade.models.Sitio.*
 import ar.edu.uade.models.Sitio
 import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.selectAll
 import java.time.LocalDate
 import java.time.LocalTime
 import java.util.*
+import ar.edu.uade.models.Clasificacion.*
+import ar.edu.uade.models.Credencial
+import kotlinx.coroutines.runBlocking
+import org.jetbrains.exposed.sql.SchemaUtils
 
 class SitioDAOFacadeMySQLImpl : SitioDAOFacade {
 
     private fun resultRowToSitio(row: ResultRow) = Sitio(
         idSitio = row[Sitios.idSitio],
-        nombre = row[Sitios.nombre],
         latitud = row[Sitios.latitud].toFloat(),
         longitud = row[Sitios.longitud].toFloat(),
         calle = row[Sitios.calle],
@@ -43,8 +49,9 @@ class SitioDAOFacadeMySQLImpl : SitioDAOFacade {
         TODO("Not yet implemented")
     }
 
-    override suspend fun allSitio(): List<Sitio> {
-        TODO("Not yet implemented")
+    override suspend fun allSitio(): List<Sitio> =dbQuery {
+        (Sitios innerJoin Clasificaciones).selectAll().map(::resultRowToSitio)
+        TODO("hacer filtros")
     }
 
     override suspend fun editSitio(
@@ -67,5 +74,11 @@ class SitioDAOFacadeMySQLImpl : SitioDAOFacade {
 
     override suspend fun deleteSitio(idSitio: Int): Boolean? {
         TODO("Not yet implemented")
+    }
+    val dao: SitioDAOFacade = SitioDAOFacadeMySQLImpl().apply {
+        runBlocking {
+            SchemaUtils.create(Clasificaciones)
+
+        }
     }
 }
