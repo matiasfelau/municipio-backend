@@ -28,6 +28,10 @@ class CredencialDAOFacadeCacheImpl(private val delegate: CredencialDAOFacade, st
         .build(true)
 
     private val credencialesCache = cacheManager.getCache("credencialesCache", String::class.javaObjectType, Credencial::class.java)
+    override suspend fun addNewCredencial(documento: String, password: String): Credencial? = delegate.addNewCredencial(documento, password)?.also{
+        credencial -> credencialesCache.put(documento,credencial)
+
+    }
 
     override suspend fun findCredencialByDocumento(documento: String): Credencial? = credencialesCache[documento] ?: delegate.findCredencialByDocumento(documento)
         .also { credencial -> credencialesCache.put(documento, credencial) }

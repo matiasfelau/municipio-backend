@@ -9,7 +9,7 @@ import java.util.*
 
 interface SitioDAOFacade {
     suspend fun addNewSitio(
-        nombre: String, //TODO AGREGADO POR NOSOTROS, VER RESPUESTA DE PROFESOR
+        nombre: String,
         latitud: Float,
         longitud: Float,
         calle: String?,
@@ -25,7 +25,7 @@ interface SitioDAOFacade {
     suspend fun allSitio(): List<Sitio>
     suspend fun editSitio(
         idSitio: Int,
-        nombre: String, //TODO AGREGADO POR NOSOTROS, VER RESPUESTA DE PROFESOR
+        nombre: String,
         latitud: Float,
         longitud: Float,
         calle: String?,

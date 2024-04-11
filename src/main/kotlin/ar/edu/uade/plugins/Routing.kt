@@ -1,22 +1,19 @@
 package ar.edu.uade.plugins
 
-import ar.edu.uade.routes.empleadoAuthRouting
-import ar.edu.uade.routes.empleadoRouting
-import ar.edu.uade.routes.vecinoAuthRouting
-import ar.edu.uade.routes.vecinoRouting
+import ar.edu.uade.routes.*
 import ar.edu.uade.services.EmpleadoJWTService
 import ar.edu.uade.services.EmpleadoService
-import ar.edu.uade.services.VecinoJWTService
-import ar.edu.uade.services.VecinoService
+import ar.edu.uade.services.CredencialJWTService
+import ar.edu.uade.services.CredencialService
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Application.configureRouting(
-        empleadoService: EmpleadoService,
-        empleadoJWTService: EmpleadoJWTService,
-        vecinoService: VecinoService,
-        vecinoJWTService: VecinoJWTService
+    empleadoService: EmpleadoService,
+    empleadoJWTService: EmpleadoJWTService,
+    credencialService: CredencialService,
+    credencialJWTService: CredencialJWTService
     ) {
     /*
     val empleadoDAO: EmpleadoDAOFacade = EmpleadoDAOFacadeCacheImpl(
@@ -31,7 +28,7 @@ fun Application.configureRouting(
         }
         empleadoRouting(empleadoService)
         empleadoAuthRouting(empleadoJWTService)
-        vecinoRouting(vecinoService)
-        vecinoAuthRouting(vecinoJWTService)
+        credencialRouting(credencialService)
+        credencialAuthRouting(credencialJWTService)
     }
 }

@@ -1,5 +1,6 @@
 package ar.edu.uade.models
 
+import ar.edu.uade.mappers.LocalTimeComponentSerializer
 import org.jetbrains.exposed.sql.Table
 import java.io.Serializable
 import java.time.LocalTime
@@ -11,6 +12,7 @@ data class movimientoReclamo(
     val idReclamo: Int,
     val responsable: String,
     val causa: String,
+    @kotlinx.serialization.Serializable(with = LocalTimeComponentSerializer::class)
     val fecha: LocalTime
 ) : Serializable{
     public object movimientosReclamo: Table(){

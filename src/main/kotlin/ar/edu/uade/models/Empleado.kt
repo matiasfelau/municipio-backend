@@ -1,5 +1,7 @@
 package ar.edu.uade.models
 
+import ar.edu.uade.mappers.LocalDateTimeComponentSerializable
+import ar.edu.uade.mappers.LocalTimeComponentSerializer
 import java.io.Serializable
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.javatime.datetime
@@ -12,6 +14,7 @@ data class Empleado(
     val password: String,
     val sector: String,
     val categoria: Int = 8,
+    @kotlinx.serialization.Serializable(with = LocalDateTimeComponentSerializable::class)
     val fechaIngreso: LocalDateTime
 ): Serializable {
     object Personal : Table() {

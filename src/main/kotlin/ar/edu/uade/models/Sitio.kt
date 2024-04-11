@@ -1,5 +1,6 @@
 package ar.edu.uade.models
 
+import ar.edu.uade.mappers.LocalTimeComponentSerializer
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.javatime.time
 import java.io.Serializable
@@ -17,7 +18,9 @@ data class Sitio(
     val entreCalleB: String?,
     val descripcion: String,
     val aCargoDe: String,
+    @kotlinx.serialization.Serializable(with = LocalTimeComponentSerializer::class)
     val apertura: LocalTime,
+    @kotlinx.serialization.Serializable(with = LocalTimeComponentSerializer::class)
     val cierre: LocalTime,
     val comentarios: String
 ): Serializable {
