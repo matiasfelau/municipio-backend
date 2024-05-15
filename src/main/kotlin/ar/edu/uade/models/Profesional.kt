@@ -30,7 +30,7 @@ data class Profesional (
         val longitud = decimal("longitud", 9, 5)
         val inicioJornada = time("inicioJornada")
         val finJornada = time("finJornada")
-        val documento = varchar("documento", 20).uniqueIndex().references(Vecino.Vecinos.documento)
+        val documento = varchar("documento", 20).uniqueIndex().references(Vecino.Vecinos.documento)//TODO NO SER UNIQUE
         override val primaryKey = PrimaryKey(idProfesional)
     }
 }
