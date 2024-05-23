@@ -28,7 +28,6 @@ fun Application.configureRouting(
         }
         empleadoRouting(empleadoService)
         empleadoAuthRouting(empleadoJWTService)
-        credencialRouting(credencialService)
-        credencialAuthRouting(credencialJWTService)
+        credencialRouting(credencialService, credencialJWTService)
     }
 }

@@ -1,13 +1,12 @@
 package ar.edu.uade.models
 
 import ar.edu.uade.mappers.LocalDateTimeComponentSerializable
-import ar.edu.uade.mappers.LocalTimeComponentSerializer
 import java.io.Serializable
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.javatime.datetime
 import java.time.LocalDateTime
 
-data class Empleado(
+data class Empleado(s
     val legajo: Int,
     val nombre: String,
     val apellido: String,

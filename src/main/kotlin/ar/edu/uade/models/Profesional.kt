@@ -18,7 +18,7 @@ data class Profesional (
     val inicioJornada: LocalTime?,
     @kotlinx.serialization.Serializable(with = LocalTimeComponentSerializer::class)
     val finJornada: LocalTime?,
-    val documento: String?
+    val documento: String
 ):Serializable{
     public object Profesionales: Table() {
         val idProfesional = integer("idProfesional").autoIncrement()
@@ -30,7 +30,7 @@ data class Profesional (
         val longitud = decimal("longitud", 9, 5)
         val inicioJornada = time("inicioJornada")
         val finJornada = time("finJornada")
-        val documento = varchar("documento", 20).uniqueIndex().references(Vecino.Vecinos.documento)//TODO NO SER UNIQUE
+        val documento = varchar("documento", 20)
         override val primaryKey = PrimaryKey(idProfesional)
     }
 }

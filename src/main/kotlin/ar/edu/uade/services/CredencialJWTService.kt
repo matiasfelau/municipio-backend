@@ -17,7 +17,7 @@ class CredencialJWTService (private val application: Application, private val cr
     val jwtVerifier: JWTVerifier = JWT.require(Algorithm.HMAC256(secret)).withAudience(audience).withIssuer(issuer).build()
 
     suspend fun createJwtToken(credencialRequest: CredencialRequest): String? {
-        val foundCredencial: Credencial? = credencialService.findCredencialByDocumento(credencialRequest.documento)
+        val foundCredencial: Credencial? = credencialService.find(credencialRequest.documento)
         return if (foundCredencial != null && credencialRequest.password == foundCredencial.password)
             JWT.create()
                 .withAudience(audience)
@@ -30,7 +30,7 @@ class CredencialJWTService (private val application: Application, private val cr
     }
     suspend fun customValidator(credential: JWTCredential, empleadoJwtService: EmpleadoJWTService): JWTPrincipal? {
         val documento: String? = extractUsername(credential)
-        val foundCredencial: Credencial? = documento?.let { credencialService.findCredencialByDocumento(it) }
+        val foundCredencial: Credencial? = documento?.let { credencialService.find(it) }
         return foundCredencial?.let {
             if (audienceMatches(credential))
                 JWTPrincipal(credential.payload)

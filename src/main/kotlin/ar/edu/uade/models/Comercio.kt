@@ -31,7 +31,7 @@ data class Comercio(
         val descripcion = varchar("descripcion",150)
         val latitud = decimal("latitud",9,5)
         val longitud = decimal("longitud",9,5)
-        val documento = varchar("documento",20).uniqueIndex().references(Vecino.Vecinos.documento)//TODO NO SER UNIQUE
+        val documento = varchar("documento",20)
         override val primaryKey = PrimaryKey(idComercio)
     }
 }
