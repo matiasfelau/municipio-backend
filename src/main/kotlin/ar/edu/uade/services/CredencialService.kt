@@ -3,6 +3,8 @@ package ar.edu.uade.services
 
 import ar.edu.uade.daos.CredencialDAOFacade
 import ar.edu.uade.daos.CredencialDAOFacadeMySQLImpl
+import ar.edu.uade.daos.VecinoDAOFacade
+import ar.edu.uade.daos.VecinoDAOFacadeMySQLImpl
 import ar.edu.uade.models.Credencial
 import io.ktor.server.config.*
 import kotlin.random.Random
@@ -32,7 +34,7 @@ class CredencialService(config: ApplicationConfig) {
         }
     }
 
-    suspend fun clavePrimerIngresoCredencial(credencial: Credencial) : Boolean {
+    suspend fun casoPrimerIngresoCredencial(credencial: Credencial) : Boolean {
         val bd = credencialDAO.findCredencialByDocumento(credencial.documento)
         var bool = false
         if (bd != null) {
@@ -42,7 +44,7 @@ class CredencialService(config: ApplicationConfig) {
                 if (credencial.password != password) {
                     password = credencial.password
                 }
-                bool = credencialDAO.editPasswordCredencial(credencial.documento, password, primerIngreso)
+                bool = credencialDAO.editPrimerIngresoCredencial(credencial.documento, password, primerIngreso)
             }
         }
         return bool

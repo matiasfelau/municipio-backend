@@ -1,6 +1,6 @@
 package ar.edu.uade.services
 
-import ar.edu.uade.mappers.EmpleadoRequest
+import ar.edu.uade.mappers.requests.EmpleadoRequest
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm

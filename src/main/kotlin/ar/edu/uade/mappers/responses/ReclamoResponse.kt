@@ -1,4 +1,4 @@
-package ar.edu.uade.mappers
+package ar.edu.uade.mappers.responses
 
 import kotlinx.serialization.Serializable
 

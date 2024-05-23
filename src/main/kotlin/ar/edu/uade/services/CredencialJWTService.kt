@@ -1,6 +1,6 @@
 package ar.edu.uade.services
 
-import ar.edu.uade.mappers.CredencialRequest
+import ar.edu.uade.mappers.requests.CredencialRequest
 import ar.edu.uade.models.Credencial
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier

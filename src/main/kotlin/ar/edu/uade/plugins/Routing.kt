@@ -15,13 +15,6 @@ fun Application.configureRouting(
     credencialService: CredencialService,
     credencialJWTService: CredencialJWTService
     ) {
-    /*
-    val empleadoDAO: EmpleadoDAOFacade = EmpleadoDAOFacadeCacheImpl(
-        EmpleadoDAOFacadeImpl(),
-        File(environment.config.property("storage.ehcacheFilePath").getString())
-    ).apply { }
-
-     */
     routing {
         get("/") {
             call.respondText("")

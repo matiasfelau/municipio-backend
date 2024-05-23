@@ -1,6 +1,6 @@
 package ar.edu.uade.routes
 
-import ar.edu.uade.mappers.EmpleadoRequest
+import ar.edu.uade.mappers.requests.EmpleadoRequest
 import ar.edu.uade.services.*
 import io.ktor.http.*
 import io.ktor.server.application.*

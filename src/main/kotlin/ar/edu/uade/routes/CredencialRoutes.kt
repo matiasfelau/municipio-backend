@@ -1,8 +1,8 @@
 package ar.edu.uade.routes
 
-import ar.edu.uade.mappers.CredencialRequest
+import ar.edu.uade.mappers.requests.CredencialRequest
+import ar.edu.uade.mappers.responses.CredencialResponse
 import ar.edu.uade.models.Credencial
-import ar.edu.uade.models.Vecino
 import ar.edu.uade.services.CredencialJWTService
 import ar.edu.uade.services.CredencialService
 import io.ktor.http.*
@@ -13,7 +13,7 @@ import io.ktor.server.routing.*
 
 fun Route.credencialRouting(credencialService: CredencialService, credencialJwtService: CredencialJWTService) {
 
-    post("/credenciales/solicitar") {
+    post("/vecino/credenciales/solicitar-cuenta") {
         try {
             val request = call.receive<CredencialRequest>()
             if (credencialService.solicitarCredencial(request.documento, request.email)) {
@@ -26,7 +26,7 @@ fun Route.credencialRouting(credencialService: CredencialService, credencialJwtS
         }
     }
 
-    put("/credenciales/habilitar") {
+    put("/vecino/credenciales/habilitar-cuenta") {
         try {
             val request = call.receive<CredencialRequest>()
             val bd = credencialService.find(request.documento)
@@ -41,12 +41,12 @@ fun Route.credencialRouting(credencialService: CredencialService, credencialJwtS
         }
     }
 
-    put("/credenciales/modificar") {
+    put("/vecino/credenciales/primer-ingreso") {
         try {
             val request = call.receive<CredencialRequest>()
             val bd = credencialService.find(request.documento)
             if (bd != null) {
-                credencialService.clavePrimerIngresoCredencial(bd)
+                credencialService.casoPrimerIngresoCredencial(bd)
                 call.respond(message = HttpStatusCode.OK)
             } else {
                 call.respond(message = HttpStatusCode.BadRequest)
@@ -56,21 +56,19 @@ fun Route.credencialRouting(credencialService: CredencialService, credencialJwtS
         }
     }
 
-    get("/credenciales/ingresar") {
+    get("/vecino/credenciales/iniciar-sesion") {
         try {
             val request = call.receive<CredencialRequest>()
             val token: String? = credencialJwtService.createJwtToken(request)
             token?.let {
                 call.respond(hashMapOf("token" to token))
-            } ?: call.respond(
-                message = HttpStatusCode.Unauthorized
-            )
+            } ?: call.respond(message = HttpStatusCode.Unauthorized)
         } catch (e: Exception) {
             call.respond(message = HttpStatusCode.InternalServerError)
         }
     }
 
-    get("/credenciales") {
+    get("/vecino/credenciales") {
         try {
             val request = call.receive<CredencialRequest>()
             val bd = credencialService.find(request.documento)
@@ -83,7 +81,12 @@ fun Route.credencialRouting(credencialService: CredencialService, credencialJwtS
             call.respond(message = HttpStatusCode.InternalServerError)
         }
     }
+}
 
 fun credencialToResponse(credencial: Credencial): CredencialResponse {
-    return CredencialResponse()
+    return CredencialResponse(
+        credencial.documento,
+        credencial.email,
+        credencial.primerIngreso
+    )
 }
