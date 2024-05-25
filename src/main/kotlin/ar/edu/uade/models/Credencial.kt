@@ -7,7 +7,7 @@ import ar.edu.uade.models.Vecino.*
 
 data class Credencial(
     val documento:String,
-    val password:String,
+    val password:String?,
     val email:String,
     val habilitado:Boolean,
     val primerIngreso:Boolean

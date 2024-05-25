@@ -7,10 +7,7 @@ import io.ktor.server.config.*
 import java.io.File
 
 class EmpleadoService(config: ApplicationConfig) {
-    private val empleadoDAO: EmpleadoDAOFacade = EmpleadoDAOFacadeCacheImpl(
-        EmpleadoDAOFacadeMySQLImpl(),
-        File(config.property("storage.ehcacheFilePath").getString())
-    ).apply { }
+    private val empleadoDAO: EmpleadoDAOFacade = EmpleadoDAOFacadeMySQLImpl()
 
     suspend fun findEmpleadoByLegajo(legajo: Int): Empleado? = empleadoDAO.findEmpleadoByLegajo(legajo)
 }

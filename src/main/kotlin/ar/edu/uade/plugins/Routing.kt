@@ -19,8 +19,7 @@ fun Application.configureRouting(
         get("/") {
             call.respondText("")
         }
-        empleadoRouting(empleadoService)
-        empleadoAuthRouting(empleadoJWTService)
+        empleadoRouting(empleadoService, empleadoJWTService)
         credencialRouting(credencialService, credencialJWTService)
     }
 }

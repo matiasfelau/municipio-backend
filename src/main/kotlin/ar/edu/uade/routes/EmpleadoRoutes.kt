@@ -1,5 +1,6 @@
 package ar.edu.uade.routes
 
+import ar.edu.uade.mappers.requests.EmpleadoRequest
 import ar.edu.uade.models.Empleado
 import ar.edu.uade.services.EmpleadoService
 import io.ktor.server.application.*
@@ -13,24 +14,3 @@ fun Route.empleadoRouting(empleadoService: EmpleadoService) {
 
     }
 }
-
-/*
-private fun EmpleadoRequest.toModel(): Empleado =
-    Empleado(
-        legajo = this.legajo,
-        nombre = this.nombre,
-        apellido = this.apellido,
-        password = this.password,
-        sector = this.sector,
-        categoria = this.categoria,
-        fechaIngreso = this.fechaIngreso
-    )
-
- */
-/*
-private fun Empleado.toResponse(): EmpleadoResponse =
-    EmpleadoResponse(
-        id = this.id,
-        username = this.username,
-    )
- */

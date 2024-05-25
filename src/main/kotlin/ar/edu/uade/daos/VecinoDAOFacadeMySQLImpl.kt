@@ -1,5 +1,6 @@
 package ar.edu.uade.daos
 
+import ar.edu.uade.databases.MySQLSingleton.dbQuery
 import ar.edu.uade.models.Barrio.Barrios
 import ar.edu.uade.models.Credencial
 import ar.edu.uade.models.Credencial.Credenciales
@@ -25,7 +26,7 @@ class VecinoDAOFacadeMySQLImpl : VecinoDAOFacade {
         codigoDeBarrio = row[Vecinos.codigoDeBarrio]
     )
 
-    override suspend fun verifyVecino(documento: String): Boolean {
-        return Vecinos.select { Vecinos.documento like documento }.map(::resultRowToVecino).isNotEmpty()
+    override suspend fun verifyVecino(documento: String): Boolean = dbQuery {
+        Vecinos.select { Vecinos.documento like documento }.map(::resultRowToVecino).isNotEmpty()
     }
 }

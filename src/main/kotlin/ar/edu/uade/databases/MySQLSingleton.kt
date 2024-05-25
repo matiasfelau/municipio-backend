@@ -1,11 +1,15 @@
 package ar.edu.uade.databases
 
+import ar.edu.uade.models.Credencial
+import ar.edu.uade.models.Empleado
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.config.*
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.sql.transactions.transaction
 
 object MySQLSingleton {
     fun init(config: ApplicationConfig) {
@@ -17,6 +21,10 @@ object MySQLSingleton {
                 config.property("storage.password").getString()
             )
         )
+        transaction(database) {
+            SchemaUtils.create(Credencial.Credenciales)
+            SchemaUtils.create(Empleado.Personal)
+        }
     }
 
     suspend fun <T> dbQuery(block: suspend () -> T): T =
@@ -32,7 +40,7 @@ object MySQLSingleton {
         driverClassName = driver
         username = user
         password = pw
-        maximumPoolSize = 3
+        maximumPoolSize = 1
         isAutoCommit = false
         transactionIsolation = "TRANSACTION_REPEATABLE_READ"
         validate()

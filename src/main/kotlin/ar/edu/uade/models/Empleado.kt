@@ -6,7 +6,7 @@ import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.javatime.datetime
 import java.time.LocalDateTime
 
-data class Empleado(s
+data class Empleado(
     val legajo: Int,
     val nombre: String,
     val apellido: String,
@@ -17,7 +17,7 @@ data class Empleado(s
     val fechaIngreso: LocalDateTime
 ): Serializable {
     object Personal : Table() {
-        val legajo = integer("legajo").autoIncrement()
+        val legajo = integer("legajo")
         val nombre = varchar("nombre", 150)
         val apellido = varchar("apellido", 150)
         val password = varchar("password", 40)

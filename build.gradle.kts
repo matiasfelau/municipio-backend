@@ -38,10 +38,12 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
-    implementation("mysql:mysql-connector-java:8.0.25")
+    implementation("mysql:mysql-connector-java:8.0.28")
     implementation("com.zaxxer:HikariCP:$hikaricp_version")
     implementation("org.ehcache:ehcache:$ehcache_version")
     implementation("org.jetbrains.exposed:exposed-java-time:$exposed_version")
+
+    implementation("com.microsoft.sqlserver:mssql-jdbc:6.1.0.jre7")
 
     //security
     implementation("io.ktor:ktor-server-auth:$ktor_version")

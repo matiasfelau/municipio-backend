@@ -13,16 +13,18 @@ import io.ktor.server.routing.*
 
 fun Route.credencialRouting(credencialService: CredencialService, credencialJwtService: CredencialJWTService) {
 
-    post("/vecino/credenciales/solicitar-cuenta") {
+    post("/vecino/registro") {
         try {
             val request = call.receive<CredencialRequest>()
-            if (credencialService.solicitarCredencial(request.documento, request.email)) {
-                call.respond(message = HttpStatusCode.Created)
+            val boolean = credencialService.solicitarCredencial(request.documento, request.email);
+            if (boolean) {
+                call.respond(boolean)
             } else {
-                call.respond(message = HttpStatusCode.BadRequest)
+                call.respond(boolean)
             }
         } catch (e: Exception) {
-            call.respond(message = HttpStatusCode.InternalServerError)
+            e.printStackTrace()
+            call.respond(false)
         }
     }
 
@@ -56,13 +58,15 @@ fun Route.credencialRouting(credencialService: CredencialService, credencialJwtS
         }
     }
 
-    get("/vecino/credenciales/iniciar-sesion") {
+    post("/vecino/ingreso") {
+
         try {
             val request = call.receive<CredencialRequest>()
             val token: String? = credencialJwtService.createJwtToken(request)
             token?.let {
                 call.respond(hashMapOf("token" to token))
             } ?: call.respond(message = HttpStatusCode.Unauthorized)
+
         } catch (e: Exception) {
             call.respond(message = HttpStatusCode.InternalServerError)
         }
@@ -81,6 +85,8 @@ fun Route.credencialRouting(credencialService: CredencialService, credencialJwtS
             call.respond(message = HttpStatusCode.InternalServerError)
         }
     }
+
+
 }
 
 fun credencialToResponse(credencial: Credencial): CredencialResponse {
