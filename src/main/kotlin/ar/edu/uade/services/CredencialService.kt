@@ -50,6 +50,8 @@ class CredencialService(config: ApplicationConfig) {
         return bool
     }
 
+
+
     suspend fun find(documento: String): Credencial? {
         return credencialDAO.findCredencialByDocumento(documento)
     }
