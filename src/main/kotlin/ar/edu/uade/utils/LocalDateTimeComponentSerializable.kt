@@ -1,4 +1,4 @@
-package ar.edu.uade.mappers
+package ar.edu.uade.utils
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer

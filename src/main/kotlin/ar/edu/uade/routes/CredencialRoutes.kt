@@ -17,49 +17,39 @@ fun Route.credencialRouting(credencialService: CredencialService, credencialJwtS
         try {
             val request = call.receive<CredencialRequest>()
             val boolean = credencialService.solicitarCredencial(request.documento, request.email);
-            if (boolean) {
-                call.respond(boolean)
-            } else {
-                call.respond(boolean)
-            }
+            call.respond(boolean)
         } catch (e: Exception) {
-            e.printStackTrace()
             call.respond(false)
         }
     }
 
-    put("/vecino/credenciales/habilitar-cuenta") {
+    get("/vecino/habilitacion/{documento}") {
+        var bool = false
         try {
-            val request = call.receive<CredencialRequest>()
-            val bd = credencialService.find(request.documento)
+            val documento = call.parameters["documento"]
+            val bd = documento?.let { d -> credencialService.find(d) }
             if (bd != null) {
-                credencialService.habilitarCredencial(bd)
-                call.respond(message = HttpStatusCode.OK)
+                bool = credencialService.habilitarCredencial(bd)
+                call.respond(bool)
             } else {
-                call.respond(message = HttpStatusCode.BadRequest)
+                call.respond(bool)
             }
         } catch (e: Exception) {
-            call.respond(message = HttpStatusCode.InternalServerError)
+            call.respond(bool)
         }
     }
 
-    put("/vecino/credenciales/primer-ingreso") {
+    put("/vecino/primer-ingreso") {
         try {
             val request = call.receive<CredencialRequest>()
-            val bd = credencialService.find(request.documento)
-            if (bd != null) {
-                credencialService.casoPrimerIngresoCredencial(bd)
-                call.respond(message = HttpStatusCode.OK)
-            } else {
-                call.respond(message = HttpStatusCode.BadRequest)
-            }
+            credencialService.casoPrimerIngresoCredencial(request)
+            call.respond(true)
         } catch (e: Exception) {
-            call.respond(message = HttpStatusCode.InternalServerError)
+            call.respond(false)
         }
     }
 
     post("/vecino/ingreso") {
-
         try {
             val request = call.receive<CredencialRequest>()
             val token: String? = credencialJwtService.createJwtToken(request)
@@ -72,21 +62,19 @@ fun Route.credencialRouting(credencialService: CredencialService, credencialJwtS
         }
     }
 
-    get("/vecino/credenciales") {
+    get("/vecino/confirmar-primer-ingreso/{documento}") {
         try {
-            val request = call.receive<CredencialRequest>()
-            val bd = credencialService.find(request.documento)
+            val documento = call.parameters["documento"]
+            val bd = documento?.let { d -> credencialService.find(d) }
             if (bd != null) {
-                call.respond(credencialToResponse(bd))
+                call.respond(bd.primerIngreso)
             } else {
-                call.respond(message = HttpStatusCode.BadRequest)
+                call.respond(false)
             }
         } catch (e: Exception) {
-            call.respond(message = HttpStatusCode.InternalServerError)
+            call.respond(false)
         }
     }
-
-
 }
 
 fun credencialToResponse(credencial: Credencial): CredencialResponse {

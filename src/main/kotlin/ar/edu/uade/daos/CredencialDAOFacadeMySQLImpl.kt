@@ -25,7 +25,7 @@ class CredencialDAOFacadeMySQLImpl : CredencialDAOFacade {
         insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToCredencial)
     }
 
-    override suspend fun editPrimerIngresoCredencial(documento: String, password: String?, primerIngreso: Boolean?): Boolean = dbQuery {
+    override suspend fun editPrimerIngresoCredencial(documento: String, password: String, primerIngreso: Boolean): Boolean = dbQuery {
         Credenciales.update({ Credenciales.documento eq documento }) {
             it[Credenciales.documento] = documento
             it[Credenciales.password] = password

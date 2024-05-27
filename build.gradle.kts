@@ -49,6 +49,14 @@ dependencies {
     implementation("io.ktor:ktor-server-auth:$ktor_version")
     implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
 
+    //mails
+    implementation("io.ktor:ktor-server-netty:2.0.0")
+    implementation("io.ktor:ktor-server-html-builder:2.0.0")
+    implementation("io.ktor:ktor-server-mustache:2.0.0")
+    implementation("io.ktor:ktor-server-call-logging:2.0.0")
+    implementation("com.sun.mail:javax.mail:1.6.2")
+
+
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }

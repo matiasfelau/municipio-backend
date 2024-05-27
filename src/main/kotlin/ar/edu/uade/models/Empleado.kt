@@ -1,6 +1,6 @@
 package ar.edu.uade.models
 
-import ar.edu.uade.mappers.LocalDateTimeComponentSerializable
+import ar.edu.uade.utils.LocalDateTimeComponentSerializable
 import java.io.Serializable
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.javatime.datetime
@@ -17,7 +17,7 @@ data class Empleado(
     val fechaIngreso: LocalDateTime
 ): Serializable {
     object Personal : Table() {
-        val legajo = integer("legajo")
+        val legajo = integer("legajo").autoIncrement()
         val nombre = varchar("nombre", 150)
         val apellido = varchar("apellido", 150)
         val password = varchar("password", 40)

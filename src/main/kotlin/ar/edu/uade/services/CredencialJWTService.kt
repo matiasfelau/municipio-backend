@@ -28,7 +28,7 @@ class CredencialJWTService (private val application: Application, private val cr
         else
             null
     }
-    suspend fun customValidator(credential: JWTCredential, empleadoJwtService: EmpleadoJWTService): JWTPrincipal? {
+    suspend fun customValidator(credential: JWTCredential, credencialJWTService: CredencialJWTService): JWTPrincipal? {
         val documento: String? = extractUsername(credential)
         val foundCredencial: Credencial? = documento?.let { credencialService.find(it) }
         return foundCredencial?.let {

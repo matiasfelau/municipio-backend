@@ -1,6 +1,5 @@
 package ar.edu.uade.models
 
-import ar.edu.uade.models.Rubro.Rubros.autoIncrement
 import org.jetbrains.exposed.sql.Table
 import java.io.Serializable
 

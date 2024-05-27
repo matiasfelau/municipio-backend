@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 data class CredencialRequest(
     val documento: String,
     val password: String?,
-    val email: String?
+    val email: String
 )

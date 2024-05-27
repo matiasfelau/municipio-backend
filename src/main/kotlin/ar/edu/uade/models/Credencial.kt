@@ -14,7 +14,7 @@ data class Credencial(
 ) : Serializable {
     public object Credenciales: Table(){
         val documento = varchar("documento",40).uniqueIndex().references(Vecinos.documento)
-        val password = varchar("password",40)
+        val password = varchar("password",40).nullable()
         val email = varchar("email", 255)
         val habilitado = bool("habilitado").default(false)
         val primerIngreso = bool("primerIngreso").default(false) //a true cuando se habilita
