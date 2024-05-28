@@ -69,7 +69,8 @@ class CredencialService(config: ApplicationConfig) {
 
         try {
             val htmlFilePath = "src/main/resources/email_template.html"
-            val htmlContent = Files.readString(Paths.get(htmlFilePath))
+            var htmlContent = Files.readString(Paths.get(htmlFilePath))
+            htmlContent = htmlContent.replace("{{password}}", password)
             val message = MimeMessage(session)
             message.setFrom(InternetAddress("MS_ad3RME@trial-jy7zpl9xwxpl5vx6.mlsender.net"))
             message.addRecipient(Message.RecipientType.TO, InternetAddress(email))
