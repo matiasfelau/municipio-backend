@@ -58,8 +58,5 @@ dependencies {
 
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
-
-    //html
-    implementation("io.ktor:ktor-thymeleaf:1.6.7")
-    implementation("org.thymeleaf:thymeleaf:3.0.12.RELEASE")
+    
 }
