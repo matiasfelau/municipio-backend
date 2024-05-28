@@ -9,6 +9,8 @@ import ar.edu.uade.mappers.requests.CredencialRequest
 import ar.edu.uade.models.Credencial
 import io.ktor.server.application.*
 import io.ktor.server.config.*
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.util.Properties
 import javax.mail.*
 import javax.mail.internet.InternetAddress
@@ -66,11 +68,14 @@ class CredencialService(config: ApplicationConfig) {
         })
 
         try {
+            val htmlFilePath = "src/main/resources/email_template.html"
+            val htmlContent = Files.readString(Paths.get(htmlFilePath))
             val message = MimeMessage(session)
             message.setFrom(InternetAddress("MS_ad3RME@trial-jy7zpl9xwxpl5vx6.mlsender.net"))
             message.addRecipient(Message.RecipientType.TO, InternetAddress(email))
             message.subject = "Su cuenta en el municipio de Palmas de Mallorca fue habilitada"
-            message.setText("Su contraseña es: $password")
+            message.setContent(htmlContent,"text/html; charset=utf-8"); //TODO REEMPLAZAR NOMBRE Y PASSWORD O AL MENOS PASSWORD
+            //message.setText("Su contraseña es: $password")
             Transport.send(message)
             println("Email sent successfully")
         } catch (e: MessagingException) {
@@ -78,7 +83,6 @@ class CredencialService(config: ApplicationConfig) {
         }
 
     }
-
 
     suspend fun casoPrimerIngresoCredencial(credencial: CredencialRequest) : Boolean {
         val bd = credencialDAO.findCredencialByDocumento(credencial.documento)

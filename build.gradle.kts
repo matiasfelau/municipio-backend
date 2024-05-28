@@ -56,7 +56,6 @@ dependencies {
     implementation("io.ktor:ktor-server-call-logging:2.0.0")
     implementation("com.sun.mail:javax.mail:1.6.2")
 
-
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }
