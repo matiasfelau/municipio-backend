@@ -7,7 +7,6 @@ import ar.edu.uade.daos.VecinoDAOFacade
 import ar.edu.uade.daos.VecinoDAOFacadeMySQLImpl
 import ar.edu.uade.mappers.requests.CredencialRequest
 import ar.edu.uade.models.Credencial
-import io.ktor.server.application.*
 import io.ktor.server.config.*
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -15,7 +14,6 @@ import java.util.Properties
 import javax.mail.*
 import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeMessage
-import javax.ws.rs.core.Application
 import kotlin.random.Random
 
 class CredencialService(config: ApplicationConfig) {
@@ -43,7 +41,7 @@ class CredencialService(config: ApplicationConfig) {
             val cr = credencialDAO.findCredencialByDocumento(credencial.documento)
             if (cr != null) {
                 cr.password?.let {
-                    sendEmail(cr.email, it)
+                    sendEmail(cr.email, it, "src/main/resources/email_template.html")
                 }
             }
         }
@@ -52,7 +50,7 @@ class CredencialService(config: ApplicationConfig) {
         return bool
     }
 
-    private fun sendEmail(email: String, password: String) {
+    private fun sendEmail(email: String, password: String, path: String) {
         val props = Properties().apply {
             put("mail.smtp.auth", "true")
             put("mail.smtp.starttls.enable", "true")
@@ -68,8 +66,7 @@ class CredencialService(config: ApplicationConfig) {
         })
 
         try {
-            val htmlFilePath = "src/main/resources/email_template.html"
-            var htmlContent = Files.readString(Paths.get(htmlFilePath))
+            var htmlContent = Files.readString(Paths.get(path))
             htmlContent = htmlContent.replace("{{password}}", password)
             val message = MimeMessage(session)
             message.setFrom(InternetAddress("MS_ad3RME@trial-jy7zpl9xwxpl5vx6.mlsender.net"))
@@ -99,6 +96,23 @@ class CredencialService(config: ApplicationConfig) {
                     credencialDAO.editPrimerIngresoCredencial(credencial.documento,
                         it, primerIngreso)
                 } == true
+            }
+        }
+        return bool
+    }
+
+    suspend fun recuperarCredencial(credencial: Credencial): Boolean {
+        var bool = false
+        if (credencial.habilitado) {
+            val password = Random.nextInt(10000000, 99999999).toString()
+            val primerIngreso = true
+            bool = credencialDAO.editPasswordCredencial(credencial.documento, password, primerIngreso)
+            //send mail
+            val cr = credencialDAO.findCredencialByDocumento(credencial.documento)
+            if (cr != null) {
+                cr.password?.let {
+                    sendEmail(cr.email, it, "src/main/resources/email_template2.html")
+                }
             }
         }
         return bool

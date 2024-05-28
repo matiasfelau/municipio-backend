@@ -2,6 +2,11 @@ package ar.edu.uade.routes
 
 import ar.edu.uade.mappers.requests.CredencialRequest
 import ar.edu.uade.mappers.requests.EmpleadoRequest
+import ar.edu.uade.mappers.responses.EmpleadoResponse
+import ar.edu.uade.mappers.responses.VecinoResponse
+import ar.edu.uade.models.Credencial
+import ar.edu.uade.models.Empleado
+import ar.edu.uade.models.Vecino
 import ar.edu.uade.services.EmpleadoJWTService
 import ar.edu.uade.services.EmpleadoService
 import io.ktor.http.*
@@ -24,25 +29,27 @@ fun Route.empleadoRouting(empleadoService: EmpleadoService, empleadoJWTService: 
             call.respond(message = HttpStatusCode.InternalServerError)
         }
     }
+
+    get("/empleado/perfil/{legajo}") {
+        try {
+            val legajo = Integer.parseInt(call.parameters["legajo"])
+            val db = empleadoService.findEmpleadoByLegajo(legajo)
+            db?.let { it1 -> empleadoToResponse(it1) }?.let { it2 -> call.respond(it2) }
+        } catch (_: Exception) {
+
+        }
+    }
+
+
 }
 
-/*
-private fun EmpleadoRequest.toModel(): Empleado =
-    Empleado(
-        legajo = this.legajo,
-        nombre = this.nombre,
-        apellido = this.apellido,
-        password = this.password,
-        sector = this.sector,
-        categoria = this.categoria,
-        fechaIngreso = this.fechaIngreso
+private fun empleadoToResponse(empleado: Empleado): EmpleadoResponse {
+    return EmpleadoResponse(
+        empleado.legajo,
+        empleado.nombre,
+        empleado.apellido,
+        empleado.password,
+        empleado.sector
     )
+}
 
- */
-/*
-private fun Empleado.toResponse(): EmpleadoResponse =
-    EmpleadoResponse(
-        id = this.id,
-        username = this.username,
-    )
- */

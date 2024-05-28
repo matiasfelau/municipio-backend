@@ -17,6 +17,7 @@ fun Route.credencialRouting(credencialService: CredencialService, credencialJwtS
         try {
             val request = call.receive<CredencialRequest>()
             val boolean = credencialService.solicitarCredencial(request.documento, request.email);
+            call.response.status(HttpStatusCode.Created)
             call.respond(boolean)
         } catch (e: Exception) {
             call.respond(false)
@@ -73,6 +74,26 @@ fun Route.credencialRouting(credencialService: CredencialService, credencialJwtS
             }
         } catch (e: Exception) {
             call.respond(false)
+        }
+    }
+
+    put("/vecino/recuperacion") {
+        var bool = false
+        try {
+            val request = call.receive<CredencialRequest>()
+            val bd = credencialService.find(request.documento)
+            if (bd != null) {
+                if (request.email == bd.email) {
+                    bool = credencialService.recuperarCredencial(bd)
+                    call.respond(bool)
+                } else {
+                    call.respond(false)
+                }
+            } else {
+                call.respond(bool)
+            }
+        } catch (e: Exception) {
+            call.respond(bool)
         }
     }
 }

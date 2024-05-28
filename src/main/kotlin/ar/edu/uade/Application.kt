@@ -3,10 +3,7 @@ package ar.edu.uade
 import ar.edu.uade.plugins.*
 import io.ktor.server.application.*
 import ar.edu.uade.databases.MySQLSingleton
-import ar.edu.uade.services.CredencialJWTService
-import ar.edu.uade.services.CredencialService
-import ar.edu.uade.services.EmpleadoJWTService
-import ar.edu.uade.services.EmpleadoService
+import ar.edu.uade.services.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.plugins.contentnegotiation.*
 
@@ -19,7 +16,8 @@ fun Application.module() {
     val credencialJWTService = CredencialJWTService(this, credencialService)
     val empleadoService = EmpleadoService(environment.config)
     val empleadoJWTService = EmpleadoJWTService(this, empleadoService)
+    val vecinoService = VecinoService(environment.config)
     configureSecurity(credencialJWTService, empleadoJWTService)
-    configureRouting(credencialService, credencialJWTService, empleadoService, empleadoJWTService)
+    configureRouting(credencialService, credencialJWTService, empleadoService, empleadoJWTService, vecinoService)
 
 }

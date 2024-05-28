@@ -8,4 +8,5 @@ interface CredencialDAOFacade {
     suspend fun editPrimerIngresoCredencial(documento:String, password: String, primerIngreso: Boolean): Boolean
     suspend fun findCredencialByDocumento(documento:String): Credencial?
     suspend fun editHabilitadoCredencial(documento:String, password: String, habilitado:Boolean, primerIngreso:Boolean): Boolean
+    suspend fun editPasswordCredencial(documento: String, password: String, primerIngreso: Boolean): Boolean
 }
