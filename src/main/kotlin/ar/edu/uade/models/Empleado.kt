@@ -16,7 +16,7 @@ data class Empleado(
     @kotlinx.serialization.Serializable(with = LocalDateTimeComponentSerializable::class)
     val fechaIngreso: LocalDateTime
 ): Serializable {
-    object Personal : Table() {
+    public object Personal : Table() {
         val legajo = integer("legajo").autoIncrement()
         val nombre = varchar("nombre", 150)
         val apellido = varchar("apellido", 150)

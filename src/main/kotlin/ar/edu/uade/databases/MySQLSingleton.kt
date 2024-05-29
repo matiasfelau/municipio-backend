@@ -2,6 +2,7 @@ package ar.edu.uade.databases
 
 import ar.edu.uade.models.Credencial
 import ar.edu.uade.models.Empleado
+import ar.edu.uade.models.Reclamo
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.config.*
@@ -24,6 +25,7 @@ object MySQLSingleton {
         transaction(database) {
             SchemaUtils.create(Credencial.Credenciales)
             SchemaUtils.create(Empleado.Personal)
+            SchemaUtils.create(Reclamo.Reclamos)
         }
     }
 
