@@ -11,7 +11,6 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 
 class ReclamoDAOFacadeMySQLImpl: ReclamoDAOFacade {
-
     private fun resultRowToReclamo(row: ResultRow) = Reclamo(
         idReclamo = row[Reclamos.idReclamo],
         descripcion = row[Reclamos.descripcion],
@@ -22,7 +21,7 @@ class ReclamoDAOFacadeMySQLImpl: ReclamoDAOFacade {
         idReclamoUnif = row[Reclamos.idReclamoUnif]
     )
 
-    override suspend fun getAllReclamosBy10(pagina: Int): List<Reclamo> = dbQuery {
+    override suspend fun get10Reclamos(pagina: Int): List<Reclamo> = dbQuery {
         val offset = (pagina - 1) * 10
         Reclamos.selectAll()
             .limit(10,offset.toLong())
@@ -38,17 +37,11 @@ class ReclamoDAOFacadeMySQLImpl: ReclamoDAOFacade {
             .map(::resultRowToReclamo)
     }
 
-    override suspend fun get10ReclamosByPertenencia(pagina: Int, propio: Boolean, documento: String): List<Reclamo> = dbQuery {
+    override suspend fun get10ReclamosByDocumento(pagina: Int, documento: String): List<Reclamo> = dbQuery {
         val offset = (pagina - 1) * 10
-        if (propio) {
-            Reclamos.select { Reclamos.documento like documento }
-                .limit(10, offset.toLong())
-                .map(::resultRowToReclamo)
-        } else {
-            Reclamos.selectAll()
-                .limit(10,offset.toLong())
-                .map(::resultRowToReclamo)
-        }
+        Reclamos.select { Reclamos.documento like documento }
+            .limit(10, offset.toLong())
+            .map(::resultRowToReclamo)
     }
 
     override suspend fun getReclamoById(id: Int): Reclamo? = dbQuery {

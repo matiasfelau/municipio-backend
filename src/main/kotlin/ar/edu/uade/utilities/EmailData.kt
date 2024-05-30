@@ -1,4 +1,4 @@
-package ar.edu.uade.utils
+package ar.edu.uade.utilities
 
 data class EmailData(val emailTo:String,
                      val subject:String,

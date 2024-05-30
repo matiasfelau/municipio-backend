@@ -1,6 +1,6 @@
 package ar.edu.uade.models
 
-import ar.edu.uade.utils.LocalDateTimeComponentSerializable
+import ar.edu.uade.utilities.LocalDateTimeComponentSerializable
 import java.io.Serializable
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.javatime.datetime
