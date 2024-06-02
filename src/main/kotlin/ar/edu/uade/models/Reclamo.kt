@@ -7,7 +7,7 @@ import org.jetbrains.exposed.sql.Table
 import ar.edu.uade.models.Desperfecto.*
 
 data class Reclamo(
-    val idReclamo: Int,
+    val idReclamo: Int?,
     val descripcion: String?,
     val estado: String,
     val documento: String,

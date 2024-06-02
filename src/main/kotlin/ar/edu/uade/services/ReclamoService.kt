@@ -22,4 +22,8 @@ class ReclamoService(config: ApplicationConfig) {
     suspend fun getReclamoById(id: Int): Reclamo? {
         return dao.getReclamoById(id)
     }
+
+    suspend fun createReclamo(requestToReclamo: Reclamo) {
+        dao.addReclamo(requestToReclamo)
+    }
 }

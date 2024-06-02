@@ -1,16 +1,19 @@
 package ar.edu.uade.routes
 
+import ar.edu.uade.mappers.requests.ReclamoRequest
 import ar.edu.uade.mappers.responses.ReclamoResponse
 import ar.edu.uade.models.Reclamo
 import ar.edu.uade.services.JWTService
 import ar.edu.uade.services.ReclamoService
 import ar.edu.uade.utilities.Autenticacion
 import ar.edu.uade.utilities.containers.AutenticacionFiltro
+import ar.edu.uade.utilities.containers.AutenticacionReclamo
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.jetbrains.exposed.exceptions.ExposedSQLException
 import java.util.ArrayList
 
 fun Route.reclamoRouting(jwtService: JWTService, reclamoService: ReclamoService) {
@@ -70,6 +73,37 @@ fun Route.reclamoRouting(jwtService: JWTService, reclamoService: ReclamoService)
         }
         call.respond(resultado)
     }
+
+    post("$ruta/nueva"){
+        try{
+            var request = call.receive<AutenticacionReclamo>()
+            val autenticacion = request.autenticacion
+            val reclamoRQ = request.reclamo
+            if (jwtService.validateToken(autenticacion.token)) {
+                reclamoService.createReclamo(requestToReclamo(reclamoRQ))
+                call.response.status(HttpStatusCode.Created)
+            }else {
+                call.response.status(HttpStatusCode.Unauthorized)
+            }
+        } catch (exposedSQLException: ExposedSQLException) {
+            call.response.status(HttpStatusCode.BadRequest)
+        } catch (exception: Exception) {
+            call.response.status(HttpStatusCode.InternalServerError)
+        }
+
+    }
+}
+
+private fun requestToReclamo(reclamoRQ: ReclamoRequest): Reclamo {
+    return Reclamo(
+        null,
+        reclamoRQ.descripcion,
+        reclamoRQ.estado,
+        reclamoRQ.documento,
+        reclamoRQ.idSitio,
+        reclamoRQ.idDesperfecto,
+        null
+    )
 }
 
 private fun reclamoToResponse(reclamo: Reclamo): ReclamoResponse {

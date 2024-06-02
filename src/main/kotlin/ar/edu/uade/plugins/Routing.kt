@@ -13,7 +13,9 @@ fun Application.configureRouting(
     empleadoJWTService: EmpleadoJWTService,
     vecinoService: VecinoService,
     jwtService: JWTService,
-    reclamoService: ReclamoService
+    reclamoService: ReclamoService,
+    desperfectoService: DesperfectoService,
+    sitioService: SitioService
     ) {
     routing {
         get("/") {
@@ -23,5 +25,7 @@ fun Application.configureRouting(
         empleadoRouting(empleadoService, empleadoJWTService)
         vecinoRouting(vecinoService, credencialService)
         reclamoRouting(jwtService, reclamoService)
+        desperfectoRouting(jwtService,desperfectoService)
+        sitioRouting(jwtService,sitioService)
     }
 }

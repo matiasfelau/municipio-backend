@@ -5,10 +5,7 @@ import ar.edu.uade.models.Desperfecto.Desperfectos
 import ar.edu.uade.models.Reclamo
 import ar.edu.uade.models.Reclamo.Reclamos
 import ar.edu.uade.models.Rubro.Rubros
-import org.jetbrains.exposed.sql.JoinType
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
 
 class ReclamoDAOFacadeMySQLImpl: ReclamoDAOFacade {
     private fun resultRowToReclamo(row: ResultRow) = Reclamo(
@@ -48,5 +45,15 @@ class ReclamoDAOFacadeMySQLImpl: ReclamoDAOFacade {
         Reclamos.select { Reclamos.idReclamo eq id }
             .map(::resultRowToReclamo)
             .singleOrNull()
+    }
+
+    override suspend fun addReclamo(reclamo: Reclamo) = dbQuery{
+        val insertStatement = Reclamos.insert{
+            it[Reclamos.descripcion] = descripcion
+            it[Reclamos.estado] = estado
+            it[Reclamos.documento] = documento
+            it[Reclamos.idSitio] = idSitio
+            it[Reclamos.idDesperfecto] = idDesperfecto
+        }
     }
 }
