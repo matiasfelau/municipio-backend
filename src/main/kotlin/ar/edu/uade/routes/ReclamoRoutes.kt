@@ -13,6 +13,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import java.util.ArrayList
 
+
 fun Route.reclamoRouting(jwtService: JWTService, reclamoService: ReclamoService) {
     val ruta = "/reclamo"
 

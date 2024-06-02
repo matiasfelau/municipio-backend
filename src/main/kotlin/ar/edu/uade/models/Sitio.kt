@@ -36,5 +36,6 @@ data class Sitio (
         val apertura = time("apertura")
         val cierre = time("cierre")
         val comentarios = text("comentarios")
+        override val primaryKey = PrimaryKey(idSitio)
     }
 }
