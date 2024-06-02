@@ -22,12 +22,6 @@ fun Route.rubroRouting(jwtService: JWTService, rubroService: RubroService) {
             }else {
                 call.response.status(HttpStatusCode.Unauthorized)
             }
-        }catch (nullPointerException: NullPointerException) {
-            call.response.status(HttpStatusCode.BadRequest)
-        } catch (numberFormatException: NumberFormatException) {
-            call.response.status(HttpStatusCode.BadRequest)
-        } catch (noSuchMethodException: NoSuchMethodException) {
-            call.response.status(HttpStatusCode.BadRequest)
         } catch (exception: Exception) {
             call.response.status(HttpStatusCode.InternalServerError)
         }
