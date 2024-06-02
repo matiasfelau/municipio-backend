@@ -1,9 +1,8 @@
 package ar.edu.uade.daos
 
 import ar.edu.uade.databases.MySQLSingleton.dbQuery
-import ar.edu.uade.models.Desperfecto
-import ar.edu.uade.models.Desperfecto.*
 import ar.edu.uade.models.Rubro
+import ar.edu.uade.models.Rubro.*
 
 import org.jetbrains.exposed.sql.ResultRow
 
@@ -18,7 +17,7 @@ class RubroDAOFacadeMySQL: RubroDAOFacade {
 
 
     override suspend fun getAllRubros(): List<Rubro>  = dbQuery {
-        Desperfectos.selectAll().map(::resultRowToRubro)
+        Rubros.selectAll().map(::resultRowToRubro)
     }
 
 }
