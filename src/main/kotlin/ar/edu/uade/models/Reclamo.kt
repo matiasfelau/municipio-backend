@@ -20,10 +20,10 @@ data class Reclamo(
         val idReclamo = integer("idReclamo").autoIncrement()
         val descripcion = varchar("descripcion",1000)
         val estado = varchar("estado",30)
-        val documento = varchar("documento",40).uniqueIndex().references(Vecinos.documento)
-        val idSitio = integer("idSitio").uniqueIndex().references(Sitios.idSitio)
-        val idDesperfecto = integer("idDesperfecto").uniqueIndex().references(Desperfectos.idDesperfecto)
-        val idReclamoUnif = integer("idReclamoUnif").uniqueIndex().references(Reclamos.idReclamo).nullable()
+        val documento = varchar("documento",40).references(Vecinos.documento)
+        val idSitio = integer("idSitio").references(Sitios.idSitio)
+        val idDesperfecto = integer("idDesperfecto").references(Desperfectos.idDesperfecto)
+        val idReclamoUnif = integer("idReclamoUnif").references(Reclamos.idReclamo).nullable()
         override val primaryKey = PrimaryKey(idReclamo)
     }
 }

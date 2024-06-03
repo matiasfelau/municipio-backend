@@ -23,6 +23,7 @@ class ReclamoDAOFacadeMySQLImpl: ReclamoDAOFacade {
 
     override suspend fun get10Reclamos(pagina: Int): List<Reclamo> = dbQuery {
         val offset = (pagina - 1) * 10
+        println("todos")
         Reclamos.selectAll()
             .limit(10,offset.toLong())
             .map(::resultRowToReclamo)
@@ -39,12 +40,14 @@ class ReclamoDAOFacadeMySQLImpl: ReclamoDAOFacade {
 
     override suspend fun get10ReclamosByDocumento(pagina: Int, documento: String): List<Reclamo> = dbQuery {
         val offset = (pagina - 1) * 10
+        println("documento")
         Reclamos.select { Reclamos.documento like documento }
             .limit(10, offset.toLong())
             .map(::resultRowToReclamo)
     }
 
     override suspend fun getReclamoById(id: Int): Reclamo? = dbQuery {
+        println("id")
         Reclamos.select { Reclamos.idReclamo eq id }
             .map(::resultRowToReclamo)
             .singleOrNull()
