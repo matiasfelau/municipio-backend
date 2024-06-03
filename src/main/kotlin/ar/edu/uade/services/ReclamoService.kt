@@ -14,7 +14,7 @@ class ReclamoService(config: ApplicationConfig) {
             "" -> dao.get10Reclamos(pagina)
             "sector" -> dao.get10ReclamosBySector(pagina, filtro.dato)
             "documento" -> dao.get10ReclamosByDocumento(pagina, filtro.dato)
-            else -> throw NoSuchMethodException()
+            else -> throw NoSuchMethodException("No existe un método para el filtro solicitado.")
         }
         return reclamos
     }
