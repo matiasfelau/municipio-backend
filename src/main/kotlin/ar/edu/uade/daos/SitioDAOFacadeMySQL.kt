@@ -1,13 +1,12 @@
 package ar.edu.uade.daos
 
 import ar.edu.uade.databases.MySQLSingleton.dbQuery
-import ar.edu.uade.models.Desperfecto
 import ar.edu.uade.models.Sitio
 import ar.edu.uade.models.Sitio.*
-import ar.edu.uade.utilities.LocalDateTimeComponentSerializable
+import org.jetbrains.exposed.sql.JoinType
 import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.selectAll
-import java.time.LocalDateTime
+import ar.edu.uade.models.PermanenciaSitio.*
+import org.jetbrains.exposed.sql.select
 
 class SitioDAOFacadeMySQL: SitioDAOFacade {
 
@@ -26,6 +25,10 @@ class SitioDAOFacadeMySQL: SitioDAOFacade {
         comentarios = row[Sitios.comentarios]
     )
     override suspend fun getAllSitios(): List<Sitio> = dbQuery{
-        Sitios.selectAll().map(::resultRowToSitio)
+        Sitios.join(
+            PermanenciaSitios,JoinType.INNER, additionalConstraint = {PermanenciaSitios.idSitio eq Sitios.idSitio}
+        ).select{
+            PermanenciaSitios.permanente eq true
+        }.map(::resultRowToSitio)
     }
 }
