@@ -5,6 +5,8 @@ import ar.edu.uade.daos.ReclamoDAOFacadeMySQLImpl
 import ar.edu.uade.models.Reclamo
 import ar.edu.uade.utilities.Filtro
 import io.ktor.server.config.*
+import kotlinx.html.MATH
+import kotlin.math.ceil
 
 class ReclamoService(config: ApplicationConfig) {
     private val dao: ReclamoDAOFacade = ReclamoDAOFacadeMySQLImpl()
@@ -34,6 +36,7 @@ class ReclamoService(config: ApplicationConfig) {
             "documento" -> dao.getAllCantidadPaginasByDocumento(filtro.dato)
             else -> throw NoSuchMethodException("No existe un método para el filtro solicitado.")
         }
-        return cantpaginas
+        val resultado = cantpaginas.toDouble()/10
+        return ceil(resultado).toInt()
     }
 }
