@@ -126,14 +126,40 @@ fun Route.reclamoRouting(jwtService: JWTService, reclamoService: ReclamoService)
 
     }
 
-    get("$ruta/cantidadPaginas"){
+    put("$ruta/cantidadPaginas"){
         try{
             val body = call.receive<AutenticacionFiltro>()
             if (jwtService.validateToken(body.autenticacion.token)){
-                call.response.status(HttpStatusCode.OK)
-                call.respond(reclamoService.getCantidadPaginas(body.filtro))
+                if ((body.autenticacion.tipo == "Vecino") || (body.autenticacion.tipo == "Empleado" && body.filtro.tipo == "Sector")) {
+                    val cantPaginas = reclamoService.getCantidadPaginas(body.filtro)
+                    call.response.status(HttpStatusCode.OK)
+                    call.respond(cantPaginas)
+
+                    println("\n--------------------" +
+                        "\nSTATUS:OK" +
+                        "\n--------------------" +
+                        "\nUSUARIO:${body.autenticacion.tipo}" +
+                        "\nFILTRO:${body.filtro.tipo},${body.filtro.dato}" +
+                        "\nPAGINA:${cantPaginas}" +
+                        "\n--------------------")
+                } else {
+                call.response.status(HttpStatusCode.Forbidden)
+                println("\n--------------------" +
+                        "\nSTATUS:FORBIDDEN" +
+                        "\n--------------------" +
+                        "\nUSUARIO:${body.autenticacion.tipo}" +
+                        "\nFILTRO:${body.filtro.tipo},${body.filtro.dato}" +
+                        "\n--------------------")
+                }
+
             }else{
                 call.response.status(HttpStatusCode.Unauthorized)
+                println("\n--------------------" +
+                        "\nSTATUS:UNAUTHORIZED" +
+                        "\n--------------------" +
+                        "\nUSUARIO:${body.autenticacion.tipo}" +
+                        "\nFILTRO:${body.filtro.tipo},${body.filtro.dato}" +
+                        "\n--------------------")
             }
         }catch (exposedSQLException: ExposedSQLException){
             call.response.status(HttpStatusCode.BadRequest)
