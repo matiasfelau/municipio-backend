@@ -28,34 +28,53 @@ fun Route.reclamoRouting(jwtService: JWTService, reclamoService: ReclamoService)
             val filtro = body.filtro
             if (jwtService.validateToken(autenticacion.token)) {
                 if ((autenticacion.tipo == "Vecino") || (autenticacion.tipo == "Empleado" && filtro.tipo == "Sector")) {
-                    println(filtro.tipo)
-                    println(filtro.dato)
                     val reclamos = reclamoService.getReclamosByFiltro(pagina, filtro)
                     for (reclamo in reclamos) {
                         resultado.add(reclamoToResponse(reclamo))
-                        println(reclamo.documento)
                     }
                     call.response.status(HttpStatusCode.OK)
+                    println("\n--------------------" +
+                            "\nSTATUS:OK" +
+                            "\n--------------------" +
+                            "\nUSUARIO:${autenticacion.tipo}" +
+                            "\nFILTRO:${filtro.tipo},${filtro.dato}" +
+                            "\nPAGINA:${pagina}" +
+                            "\n--------------------")
                 } else {
                     call.response.status(HttpStatusCode.Forbidden)
+                    println("\n--------------------" +
+                            "\nSTATUS:FORBIDDEN" +
+                            "\n--------------------" +
+                            "\nUSUARIO:${autenticacion.tipo}" +
+                            "\nFILTRO:${filtro.tipo},${filtro.dato}" +
+                            "\nPAGINA:${pagina}" +
+                            "\n--------------------")
                 }
             } else {
                 call.response.status(HttpStatusCode.Unauthorized)
+                println("\n--------------------" +
+                        "\nSTATUS:UNAUTHORIZED" +
+                        "\n--------------------" +
+                        "\nUSUARIO:${autenticacion.tipo}" +
+                        "\nFILTRO:${filtro.tipo},${filtro.dato}" +
+                        "\nPAGINA:${pagina}" +
+                        "\n--------------------")
             }
         } catch (exposedSQLException: ExposedSQLException) {
-            println(exposedSQLException.message)
             call.response.status(HttpStatusCode.BadRequest)
+            exposedSQLException.printStackTrace()
         } catch (nullPointerException: NullPointerException) {
-            println(nullPointerException.message)
             call.response.status(HttpStatusCode.BadRequest)
+            nullPointerException.printStackTrace()
         } catch (numberFormatException: NumberFormatException) {
-            println(numberFormatException.message)
             call.response.status(HttpStatusCode.BadRequest)
+            numberFormatException.printStackTrace()
         } catch (noSuchMethodException: NoSuchMethodException) {
-            println(noSuchMethodException.message)
             call.response.status(HttpStatusCode.BadRequest)
+            noSuchMethodException.printStackTrace()
         } catch (exception: Exception) {
             call.response.status(HttpStatusCode.InternalServerError)
+            exception.printStackTrace()
         }
         call.respond(resultado)
     }
