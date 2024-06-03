@@ -26,4 +26,14 @@ class ReclamoService(config: ApplicationConfig) {
     suspend fun createReclamo(requestToReclamo: Reclamo) {
         dao.addReclamo(requestToReclamo)
     }
+
+    suspend fun getCantidadPaginas(filtro: Filtro): Int {
+        val cantpaginas = when (filtro.tipo) {
+            "" -> dao.getAllCantidadPaginas()
+            "sector" -> dao.getAllCantidadPaginasBySector(filtro.dato)
+            "documento" -> dao.getAllCantidadPaginasByDocumento(filtro.dato)
+            else -> throw NoSuchMethodException("No existe un método para el filtro solicitado.")
+        }
+        return cantpaginas
+    }
 }

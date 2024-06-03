@@ -125,6 +125,22 @@ fun Route.reclamoRouting(jwtService: JWTService, reclamoService: ReclamoService)
         }
 
     }
+
+    get("$ruta/cantidadPaginas"){
+        try{
+            val body = call.receive<AutenticacionFiltro>()
+            if (jwtService.validateToken(body.autenticacion.token)){
+                call.response.status(HttpStatusCode.OK)
+                call.respond(reclamoService.getCantidadPaginas(body.filtro))
+            }else{
+                call.response.status(HttpStatusCode.Unauthorized)
+            }
+        }catch (exposedSQLException: ExposedSQLException){
+            call.response.status(HttpStatusCode.BadRequest)
+        }catch (exception: Exception){
+            call.response.status(HttpStatusCode.InternalServerError)
+        }
+    }
 }
 
 private fun requestToReclamo(reclamoRQ: ReclamoRequest): Reclamo {

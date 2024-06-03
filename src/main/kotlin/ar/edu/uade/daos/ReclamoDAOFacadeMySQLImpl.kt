@@ -5,7 +5,10 @@ import ar.edu.uade.models.Desperfecto.Desperfectos
 import ar.edu.uade.models.Reclamo
 import ar.edu.uade.models.Reclamo.Reclamos
 import ar.edu.uade.models.Rubro.Rubros
+import ar.edu.uade.utilities.Filtro
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
 
 class ReclamoDAOFacadeMySQLImpl: ReclamoDAOFacade {
     private fun resultRowToReclamo(row: ResultRow) = Reclamo(
@@ -58,5 +61,25 @@ class ReclamoDAOFacadeMySQLImpl: ReclamoDAOFacade {
             it[Reclamos.idSitio] = idSitio
             it[Reclamos.idDesperfecto] = idDesperfecto
         }
+    }
+
+    override suspend fun getAllCantidadPaginas(): Int {
+        return Reclamos.selectAll()
+            .map(::resultRowToReclamo)
+            .count()
+    }
+
+    override suspend fun getAllCantidadPaginasByDocumento(documento: String): Int {
+        return Reclamos.select { Reclamos.documento like documento }
+            .map(::resultRowToReclamo)
+            .count()
+    }
+
+    override suspend fun getAllCantidadPaginasBySector(sector: String): Int {
+        return Reclamos.join(Reclamos, JoinType.INNER, additionalConstraint = { Reclamos.idDesperfecto eq Desperfectos.idDesperfecto })
+            .join(Desperfectos, JoinType.INNER, additionalConstraint = { Desperfectos.idRubro eq Rubros.idRubro })
+            .select { Rubros.descripcion like sector }
+            .map(::resultRowToReclamo)
+            .count()
     }
 }
