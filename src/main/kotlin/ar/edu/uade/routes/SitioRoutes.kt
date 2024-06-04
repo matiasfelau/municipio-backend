@@ -1,6 +1,7 @@
 package ar.edu.uade.routes
 
 
+import ar.edu.uade.mappers.responses.SitioResponse
 import ar.edu.uade.models.Sitio
 
 import ar.edu.uade.services.JWTService
@@ -14,14 +15,23 @@ import io.ktor.server.routing.*
 import java.util.ArrayList
 
 fun Route.sitioRouting(jwtService: JWTService, sitioService: SitioService) {
-    val ruta = "/sitios"
+    val ruta = "/sitio"
 
     put("$ruta/todos"){
-        var resultado: List<Sitio> = ArrayList<Sitio>()
+        val resultado: MutableList<SitioResponse> = ArrayList<SitioResponse>()
         try{
-            val body = call.receive<Autenticacion>()
-            if (jwtService.validateToken(body.token)) {
-                resultado = sitioService.getSitios()
+            val autenticacion = call.receive<Autenticacion>()
+            if (jwtService.validateToken(autenticacion.token)) {
+                val sitios = sitioService.getSitios()
+                for (sitio in sitios) {
+                    resultado.add(sitioToResponse(sitio))
+                }
+                println("\n--------------------" +
+                        "\nSTATUS:OK" +
+                        "\n--------------------" +
+                        "\nUSUARIO:${autenticacion.tipo}" +
+                        "\nCANTIDAD DE SITIOS:${resultado.size}" +
+                        "\n--------------------")
             }else {
                 call.response.status(HttpStatusCode.Unauthorized)
             }
@@ -31,4 +41,11 @@ fun Route.sitioRouting(jwtService: JWTService, sitioService: SitioService) {
         call.respond(resultado)
 
     }
+}
+
+private fun sitioToResponse(sitio: Sitio): SitioResponse {
+    return SitioResponse(
+        sitio.idSitio,
+        sitio.descripcion
+    )
 }

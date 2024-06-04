@@ -36,7 +36,9 @@ class ReclamoService(config: ApplicationConfig) {
             "documento" -> dao.getAllCantidadPaginasByDocumento(filtro.dato)
             else -> throw NoSuchMethodException("No existe un método para el filtro solicitado.")
         }
+        println(cantpaginas)
         val resultado = cantpaginas.toDouble()/10
+        println(resultado)
         return ceil(resultado).toInt()
     }
 }

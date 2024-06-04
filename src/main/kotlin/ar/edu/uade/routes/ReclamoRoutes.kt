@@ -29,7 +29,7 @@ fun Route.reclamoRouting(jwtService: JWTService, reclamoService: ReclamoService)
             val autenticacion = body.autenticacion
             val filtro = body.filtro
             if (jwtService.validateToken(autenticacion.token)) {
-                if ((autenticacion.tipo == "Vecino") || (autenticacion.tipo == "Empleado" && filtro.tipo == "Sector")) {
+                if ((autenticacion.tipo == "Vecino") || (autenticacion.tipo == "Empleado" && filtro.tipo == "sector")) {
                     val reclamos = reclamoService.getReclamosByFiltro(pagina, filtro)
                     for (reclamo in reclamos) {
                         resultado.add(reclamoToResponse(reclamo))
@@ -130,7 +130,7 @@ fun Route.reclamoRouting(jwtService: JWTService, reclamoService: ReclamoService)
         try{
             val body = call.receive<AutenticacionFiltro>()
             if (jwtService.validateToken(body.autenticacion.token)){
-                if ((body.autenticacion.tipo == "Vecino") || (body.autenticacion.tipo == "Empleado" && body.filtro.tipo == "Sector")) {
+                if ((body.autenticacion.tipo == "Vecino") || (body.autenticacion.tipo == "Empleado" && body.filtro.tipo == "sector")) {
                     val cantPaginas = reclamoService.getCantidadPaginas(body.filtro)
                     call.response.status(HttpStatusCode.OK)
                     call.respond(cantPaginas)
@@ -140,7 +140,7 @@ fun Route.reclamoRouting(jwtService: JWTService, reclamoService: ReclamoService)
                         "\n--------------------" +
                         "\nUSUARIO:${body.autenticacion.tipo}" +
                         "\nFILTRO:${body.filtro.tipo},${body.filtro.dato}" +
-                        "\nPAGINA:${cantPaginas}" +
+                        "\nCANTIDAD DE PAGINAS:${cantPaginas}" +
                         "\n--------------------")
                 } else {
                 call.response.status(HttpStatusCode.Forbidden)
@@ -163,8 +163,16 @@ fun Route.reclamoRouting(jwtService: JWTService, reclamoService: ReclamoService)
             }
         }catch (exposedSQLException: ExposedSQLException){
             call.response.status(HttpStatusCode.BadRequest)
+            println("\n--------------------" +
+                    "\nSTATUS:BAD REQUEST" +
+                    "\n--------------------")
         }catch (exception: Exception){
             call.response.status(HttpStatusCode.InternalServerError)
+            println("\n--------------------" +
+                    "\nSTATUS:INTERNAL SERVER ERROR" +
+                    "\n--------------------")
+            println(exception.message)
+            exception.printStackTrace()
         }
     }
 }

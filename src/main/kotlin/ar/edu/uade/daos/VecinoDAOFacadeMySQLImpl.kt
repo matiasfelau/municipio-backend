@@ -1,12 +1,9 @@
 package ar.edu.uade.daos
 
 import ar.edu.uade.databases.MySQLSingleton.dbQuery
-import ar.edu.uade.models.Credencial
-import ar.edu.uade.models.Credencial.Credenciales
 import ar.edu.uade.models.Vecino
 import ar.edu.uade.models.Vecino.Vecinos
 import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
 import org.jetbrains.exposed.sql.select
 
 class VecinoDAOFacadeMySQLImpl : VecinoDAOFacade {
@@ -16,7 +13,7 @@ class VecinoDAOFacadeMySQLImpl : VecinoDAOFacade {
         nombre = row[Vecinos.nombre],
         apellido = row[Vecinos.apellido],
         direccion = row[Vecinos.direccion],
-        codigoDeBarrio = row[Vecinos.codigoDeBarrio]
+        codigoBarrio = row[Vecinos.codigoBarrio]
     )
 
     override suspend fun verifyVecino(documento: String): Boolean = dbQuery {

@@ -13,7 +13,7 @@ data class Desperfecto(
     public object Desperfectos: Table() {
         val idDesperfecto = integer("idDesperfecto").autoIncrement()
         val descripcion = varchar("descripcion",200)
-        val idRubro = integer("idRubro").uniqueIndex().references(Rubros.idRubro)
+        val idRubro = integer("idRubro").references(Rubros.idRubro).nullable()
         override val primaryKey = PrimaryKey(idDesperfecto)
     }
 }

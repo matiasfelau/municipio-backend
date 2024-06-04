@@ -44,7 +44,7 @@ object MySQLSingleton {
         driverClassName = driver
         username = user
         password = pw
-        maximumPoolSize = 1
+        maximumPoolSize = 10
         isAutoCommit = false
         transactionIsolation = "TRANSACTION_REPEATABLE_READ"
         validate()

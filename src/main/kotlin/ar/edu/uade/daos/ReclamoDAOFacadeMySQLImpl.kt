@@ -31,8 +31,8 @@ class ReclamoDAOFacadeMySQLImpl: ReclamoDAOFacade {
 
     override suspend fun get10ReclamosBySector(pagina: Int, sector: String): List<Reclamo> = dbQuery {
         val offset = (pagina - 1) * 10
-        Reclamos.join(Reclamos, JoinType.INNER, additionalConstraint = { Reclamos.idDesperfecto eq Desperfectos.idDesperfecto })
-            .join(Desperfectos, JoinType.INNER, additionalConstraint = { Desperfectos.idRubro eq Rubros.idRubro })
+        Reclamos.join(Desperfectos, JoinType.INNER, additionalConstraint = { Reclamos.idDesperfecto eq Desperfectos.idDesperfecto })
+            .join(Rubros, JoinType.INNER, additionalConstraint = { Desperfectos.idRubro eq Rubros.idRubro })
             .select { Rubros.descripcion like sector }
             .limit(10, offset.toLong())
             .map(::resultRowToReclamo)
@@ -63,21 +63,21 @@ class ReclamoDAOFacadeMySQLImpl: ReclamoDAOFacade {
         }
     }
 
-    override suspend fun getAllCantidadPaginas(): Int {
-        return Reclamos.selectAll()
+    override suspend fun getAllCantidadPaginas(): Int = dbQuery {
+        Reclamos.selectAll()
             .map(::resultRowToReclamo)
             .count()
     }
 
-    override suspend fun getAllCantidadPaginasByDocumento(documento: String): Int {
-        return Reclamos.select { Reclamos.documento like documento }
+    override suspend fun getAllCantidadPaginasByDocumento(documento: String): Int = dbQuery {
+        Reclamos.select { Reclamos.documento like documento }
             .map(::resultRowToReclamo)
             .count()
     }
 
-    override suspend fun getAllCantidadPaginasBySector(sector: String): Int {
-        return Reclamos.join(Reclamos, JoinType.INNER, additionalConstraint = { Reclamos.idDesperfecto eq Desperfectos.idDesperfecto })
-            .join(Desperfectos, JoinType.INNER, additionalConstraint = { Desperfectos.idRubro eq Rubros.idRubro })
+    override suspend fun getAllCantidadPaginasBySector(sector: String): Int = dbQuery {
+        Reclamos.join(Desperfectos, JoinType.INNER, additionalConstraint = { Reclamos.idDesperfecto eq Desperfectos.idDesperfecto })
+            .join(Rubros, JoinType.INNER, additionalConstraint = { Desperfectos.idRubro eq Rubros.idRubro })
             .select { Rubros.descripcion like sector }
             .map(::resultRowToReclamo)
             .count()

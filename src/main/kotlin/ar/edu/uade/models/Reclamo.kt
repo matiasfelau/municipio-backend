@@ -18,7 +18,7 @@ data class Reclamo(
 ): Serializable{
     public object Reclamos : Table() {
         val idReclamo = integer("idReclamo").autoIncrement()
-        val descripcion = varchar("descripcion",1000)
+        val descripcion = varchar("descripcion",1000).nullable()
         val estado = varchar("estado",30)
         val documento = varchar("documento",40).references(Vecinos.documento)
         val idSitio = integer("idSitio").references(Sitios.idSitio)

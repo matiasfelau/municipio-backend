@@ -5,7 +5,7 @@ import java.io.Serializable
 
 data class Rubro(
     val idRubro: Int,
-    val descripcion: String?
+    val descripcion: String
 ): Serializable {
     public object Rubros: Table() {
         val idRubro = integer("idRubro").autoIncrement()

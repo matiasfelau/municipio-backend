@@ -19,7 +19,9 @@ fun Application.module() {
     val vecinoService = VecinoService(environment.config)
     val jwtService = JWTService(this)
     val reclamoService = ReclamoService(environment.config)
+    val rubroService = RubroService(environment.config)
+    val sitioService = SitioService(environment.config)
     configureSecurity(credencialJWTService, empleadoJWTService)
-    configureRouting(credencialService, credencialJWTService, empleadoService, empleadoJWTService, vecinoService, jwtService, reclamoService)
+    configureRouting(credencialService, credencialJWTService, empleadoService, empleadoJWTService, vecinoService, jwtService, reclamoService, rubroService, sitioService)
 
 }

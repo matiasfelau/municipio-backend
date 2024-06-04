@@ -10,6 +10,7 @@ data class Empleado(
     val legajo: Int,
     val nombre: String,
     val apellido: String,
+    val documento: String,
     val password: String,
     val sector: String,
     val categoria: Int = 8,
@@ -20,6 +21,7 @@ data class Empleado(
         val legajo = integer("legajo").autoIncrement()
         val nombre = varchar("nombre", 150)
         val apellido = varchar("apellido", 150)
+        val documento = varchar("documento", 40)
         val password = varchar("password", 40)
         val sector = varchar("sector", 200)
         val categoria = integer("categoria")

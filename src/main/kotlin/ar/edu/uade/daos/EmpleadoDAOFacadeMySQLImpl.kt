@@ -14,6 +14,7 @@ class EmpleadoDAOFacadeMySQLImpl : EmpleadoDAOFacade {
         nombre = row[Personal.nombre],
         apellido = row[Personal.apellido],
         password = row[Personal.password],
+        documento = row[Personal.documento],
         sector = row[Personal.sector],
         categoria = row[Personal.categoria],
         fechaIngreso = row[Personal.fechaIngreso]
