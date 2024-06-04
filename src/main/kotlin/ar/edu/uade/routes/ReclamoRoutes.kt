@@ -9,13 +9,16 @@ import ar.edu.uade.utilities.Autenticacion
 import ar.edu.uade.utilities.containers.AutenticacionFiltro
 import ar.edu.uade.utilities.containers.AutenticacionReclamo
 import io.ktor.http.*
+import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.html.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.jetbrains.exposed.exceptions.ExposedSQLException
+import java.io.File
 import java.util.ArrayList
+import javax.mail.Multipart
 
 
 fun Route.reclamoRouting(jwtService: JWTService, reclamoService: ReclamoService) {
@@ -126,6 +129,14 @@ fun Route.reclamoRouting(jwtService: JWTService, reclamoService: ReclamoService)
 
     }
 
+    post("$ruta/subirImagen/{idReclamo}"){
+        val multipart = call.receiveMultipart()
+        val imageUrl: String? = null
+        multipart.forEachPart {
+
+        }
+    }
+
     put("$ruta/cantidadPaginas"){
         try{
             val body = call.receive<AutenticacionFiltro>()
@@ -196,4 +207,8 @@ private fun reclamoToResponse(reclamo: Reclamo): ReclamoResponse {
         reclamo.estado,
         reclamo.documento
     )
+}
+
+private fun joinMultipart(multipart: Multipart): File{
+
 }

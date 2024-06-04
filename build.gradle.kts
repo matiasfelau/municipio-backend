@@ -56,6 +56,12 @@ dependencies {
     implementation("io.ktor:ktor-server-call-logging:2.0.0")
     implementation("com.sun.mail:javax.mail:1.6.2")
 
+    //cloudinary
+    implementation("com.cloudinary:cloudinary-http44:1.38.0")
+    implementation("com.cloudinary:cloudinary-taglib:1.38.0")
+    implementation("io.github.cdimascio:dotenv-java:2.2.4")
+
+
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     

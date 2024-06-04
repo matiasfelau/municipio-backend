@@ -3,9 +3,14 @@ package ar.edu.uade.services
 import ar.edu.uade.daos.ReclamoDAOFacade
 import ar.edu.uade.daos.ReclamoDAOFacadeMySQLImpl
 import ar.edu.uade.models.Reclamo
+import ar.edu.uade.utilities.CloudinaryConfig
 import ar.edu.uade.utilities.Filtro
+import com.cloudinary.Cloudinary
+import com.cloudinary.utils.ObjectUtils
 import io.ktor.server.config.*
 import kotlinx.html.MATH
+import java.io.File
+import javax.mail.Multipart
 import kotlin.math.ceil
 
 class ReclamoService(config: ApplicationConfig) {
@@ -27,6 +32,10 @@ class ReclamoService(config: ApplicationConfig) {
 
     suspend fun createReclamo(requestToReclamo: Reclamo) {
         dao.addReclamo(requestToReclamo)
+    }
+
+    suspend fun addImageToReclamo(file: File, urlElemento: String){
+        CloudinaryConfig.cloudinary.uploader().upload(file, ObjectUtils.emptyMap())
     }
 
     suspend fun getCantidadPaginas(filtro: Filtro): Int {

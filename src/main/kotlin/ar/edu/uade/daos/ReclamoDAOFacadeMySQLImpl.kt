@@ -4,6 +4,7 @@ import ar.edu.uade.databases.MySQLSingleton.dbQuery
 import ar.edu.uade.models.Desperfecto.Desperfectos
 import ar.edu.uade.models.Reclamo
 import ar.edu.uade.models.Reclamo.Reclamos
+import ar.edu.uade.models.ReclamoImagen
 import ar.edu.uade.models.Rubro.Rubros
 import ar.edu.uade.utilities.Filtro
 import org.jetbrains.exposed.sql.*
@@ -61,6 +62,12 @@ class ReclamoDAOFacadeMySQLImpl: ReclamoDAOFacade {
             it[Reclamos.idSitio] = idSitio
             it[Reclamos.idDesperfecto] = idDesperfecto
         }
+    }
+
+    override suspend fun addImagenToReclamo(idReclamo: Int,urlImagen: String): Boolean {
+        return ReclamoImagen.ReclamoImagenes.update({ ReclamoImagen.ReclamoImagenes.idReclamo eq idReclamo }) {
+            it[ReclamoImagen.ReclamoImagenes.urlImagen] = urlImagen
+        } >0
     }
 
     override suspend fun getAllCantidadPaginas(): Int = dbQuery {
