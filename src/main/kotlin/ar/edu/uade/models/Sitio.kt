@@ -1,6 +1,8 @@
 package ar.edu.uade.models
 
 
+import ar.edu.uade.utilities.BigDecimalComponentSerializer
+import ar.edu.uade.utilities.LocalDateTimeComponentSerializable
 import ar.edu.uade.utilities.LocalTimeComponentSerializer
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.javatime.time
@@ -9,8 +11,10 @@ import java.math.BigDecimal
 import java.time.LocalTime
 
 data class Sitio (
-    val idSitio: Int,
+    val idSitio: Int?,
+    @kotlinx.serialization.Serializable(with = BigDecimalComponentSerializer::class)
     val latitud: BigDecimal,
+    @kotlinx.serialization.Serializable(with = BigDecimalComponentSerializer::class)
     val longitud: BigDecimal,
     val calle: String?,
     val numero: Int,

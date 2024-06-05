@@ -112,23 +112,40 @@ fun Route.reclamoRouting(jwtService: JWTService, reclamoService: ReclamoService)
         call.respond(resultado)
     }
 
-    post("$ruta/nueva"){
+    post("$ruta/nuevo"){
+        val result: Reclamo?
         try{
-            var request = call.receive<AutenticacionReclamo>()
+            val request = call.receive<AutenticacionReclamo>()
             val autenticacion = request.autenticacion
             val reclamoRQ = request.reclamo
             if (jwtService.validateToken(autenticacion.token)) {
-                reclamoService.createReclamo(requestToReclamo(reclamoRQ))
+                result = reclamoService.createReclamo(requestToReclamo(reclamoRQ))
                 call.response.status(HttpStatusCode.Created)
+                println("\n--------------------" +
+                        "\nSTATUS:RECLAMO CREATED" +
+                        "\n--------------------")
+                if (result != null) {
+                    call.respond(reclamoToResponse(result))
+                }
             }else {
                 call.response.status(HttpStatusCode.Unauthorized)
+                println("\n--------------------" +
+                        "\nSTATUS:RECLAMO UNAUTHORIZED" +
+                        "\n--------------------")
             }
         } catch (exposedSQLException: ExposedSQLException) {
             call.response.status(HttpStatusCode.BadRequest)
+            println("\n--------------------" +
+                    "\nSTATUS:RECLAMO BAD REQUEST" +
+                    "\n--------------------")
+            exposedSQLException.printStackTrace()
         } catch (exception: Exception) {
             call.response.status(HttpStatusCode.InternalServerError)
+            println("\n--------------------" +
+                    "\nSTATUS:RECLAMO INTERNAL SERVER ERROR" +
+                    "\n--------------------")
+            exception.printStackTrace()
         }
-
     }
 
     post("$ruta/subirImagen/{idReclamo}"){

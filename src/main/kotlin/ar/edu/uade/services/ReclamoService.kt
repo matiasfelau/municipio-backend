@@ -30,8 +30,9 @@ class ReclamoService(config: ApplicationConfig) {
         return dao.getReclamoById(id)
     }
 
-    suspend fun createReclamo(requestToReclamo: Reclamo) {
-        dao.addReclamo(requestToReclamo)
+    suspend fun createReclamo(requestToReclamo: Reclamo): Reclamo? {
+        return dao.addReclamo(requestToReclamo)
+
     }
 
     suspend fun addImageToReclamo(idReclamo:Int, urlElemento: String){

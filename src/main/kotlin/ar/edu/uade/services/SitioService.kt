@@ -12,4 +12,8 @@ class SitioService (config: ApplicationConfig){
     suspend fun getSitios(): List<Sitio>{
         return dao.getAllSitios()
     }
+
+    suspend fun addSitio(sitio: Sitio): Int?{
+        return dao.addNewSitio(sitio)?.idSitio
+    }
 }

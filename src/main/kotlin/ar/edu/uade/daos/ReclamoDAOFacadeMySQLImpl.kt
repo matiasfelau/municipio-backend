@@ -56,12 +56,13 @@ class ReclamoDAOFacadeMySQLImpl: ReclamoDAOFacade {
 
     override suspend fun addReclamo(reclamo: Reclamo) = dbQuery{
         val insertStatement = Reclamos.insert{
-            it[Reclamos.descripcion] = descripcion
-            it[Reclamos.estado] = estado
-            it[Reclamos.documento] = documento
-            it[Reclamos.idSitio] = idSitio
-            it[Reclamos.idDesperfecto] = idDesperfecto
+            it[Reclamos.descripcion] = reclamo.descripcion
+            it[Reclamos.estado] = reclamo.estado
+            it[Reclamos.documento] = reclamo.documento
+            it[Reclamos.idSitio] = reclamo.idSitio
+            it[Reclamos.idDesperfecto] = reclamo.idDesperfecto
         }
+        insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToReclamo)
     }
 
     override suspend fun addImagenToReclamo(idReclamo: Int,urlImagen: String): Boolean {
