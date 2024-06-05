@@ -6,8 +6,10 @@ import ar.edu.uade.models.Reclamo
 import ar.edu.uade.services.JWTService
 import ar.edu.uade.services.ReclamoService
 import ar.edu.uade.utilities.Autenticacion
+import ar.edu.uade.utilities.CloudinaryConfig
 import ar.edu.uade.utilities.containers.AutenticacionFiltro
 import ar.edu.uade.utilities.containers.AutenticacionReclamo
+import com.cloudinary.utils.ObjectUtils
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
@@ -131,9 +133,31 @@ fun Route.reclamoRouting(jwtService: JWTService, reclamoService: ReclamoService)
 
     post("$ruta/subirImagen/{idReclamo}"){
         val multipart = call.receiveMultipart()
-        val imageUrl: String? = null
-        multipart.forEachPart {
+        var urlImagen: String? = null
+        val idReclamo = call.parameters["idReclamo"]?.toIntOrNull()
+        val uploadDir = File("uploads")
+        if(!uploadDir.exists()){
+            uploadDir.mkdir()
+        }
 
+        multipart.forEachPart { part ->
+            if (part is PartData.FileItem){
+                val file = File("uploads/${part.originalFileName}")
+                part.streamProvider().use { input ->
+                    file.outputStream().buffered().use { output ->
+                        input.copyTo(output)
+                    }
+                }
+                val uploadResult = CloudinaryConfig.cloudinary.uploader().upload(file, ObjectUtils.emptyMap())
+                urlImagen = uploadResult["url"] as String
+                file.delete()
+            }
+            part.dispose()
+        }
+        if (urlImagen != null) {
+            if (idReclamo != null) {
+                reclamoService.addImageToReclamo(idReclamo, urlImagen!!)
+            }
         }
     }
 
@@ -207,8 +231,4 @@ private fun reclamoToResponse(reclamo: Reclamo): ReclamoResponse {
         reclamo.estado,
         reclamo.documento
     )
-}
-
-private fun joinMultipart(multipart: Multipart): File{
-
 }

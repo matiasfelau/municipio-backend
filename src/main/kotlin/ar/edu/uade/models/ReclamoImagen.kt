@@ -6,7 +6,7 @@ import java.io.Serializable
 data class ReclamoImagen(
     val urlImagen: String,
     val idReclamo: Int
-): Serializable{
+): Serializable {
     object ReclamoImagenes: Table(){
         val urlImagen = varchar("urlImagen",255)
         val idReclamo = integer("idReclamo").references(Reclamo.Reclamos.idReclamo)

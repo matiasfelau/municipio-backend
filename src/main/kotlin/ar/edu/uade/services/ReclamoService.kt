@@ -34,8 +34,8 @@ class ReclamoService(config: ApplicationConfig) {
         dao.addReclamo(requestToReclamo)
     }
 
-    suspend fun addImageToReclamo(file: File, urlElemento: String){
-        CloudinaryConfig.cloudinary.uploader().upload(file, ObjectUtils.emptyMap())
+    suspend fun addImageToReclamo(idReclamo:Int, urlElemento: String){
+        dao.addImagenToReclamo(idReclamo, urlElemento)
     }
 
     suspend fun getCantidadPaginas(filtro: Filtro): Int {
