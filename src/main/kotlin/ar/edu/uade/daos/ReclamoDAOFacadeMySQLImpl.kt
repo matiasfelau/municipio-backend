@@ -22,6 +22,11 @@ class ReclamoDAOFacadeMySQLImpl: ReclamoDAOFacade {
         idReclamoUnif = row[Reclamos.idReclamoUnif]
     )
 
+    private fun resultRowToReclamoImagen(row: ResultRow) = ReclamoImagen(
+        idReclamo = row[ReclamoImagen.ReclamoImagenes.idReclamo],
+        urlImagen = row[ReclamoImagen.ReclamoImagenes.urlImagen]
+    )
+
     override suspend fun get10Reclamos(pagina: Int): List<Reclamo> = dbQuery {
         val offset = (pagina - 1) * 10
         println("todos")
@@ -65,10 +70,11 @@ class ReclamoDAOFacadeMySQLImpl: ReclamoDAOFacade {
         insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToReclamo)
     }
 
-    override suspend fun addImagenToReclamo(idReclamo: Int,urlImagen: String): Boolean {
-        return ReclamoImagen.ReclamoImagenes.update({ ReclamoImagen.ReclamoImagenes.idReclamo eq idReclamo }) {
+    override suspend fun addImagenToReclamo(idReclamo: Int,urlImagen: String) = dbQuery{
+        val insertStatement = ReclamoImagen.ReclamoImagenes.insert {
+            it[ReclamoImagen.ReclamoImagenes.idReclamo] = idReclamo
             it[ReclamoImagen.ReclamoImagenes.urlImagen] = urlImagen
-        } >0
+        }
     }
 
     override suspend fun getAllCantidadPaginas(): Int = dbQuery {
@@ -89,5 +95,10 @@ class ReclamoDAOFacadeMySQLImpl: ReclamoDAOFacade {
             .select { Rubros.descripcion like sector }
             .map(::resultRowToReclamo)
             .count()
+    }
+
+    override suspend fun getFotosById(id: Int): List<ReclamoImagen> = dbQuery {
+        ReclamoImagen.ReclamoImagenes.select{ ReclamoImagen.ReclamoImagenes.idReclamo eq id }
+            .map(::resultRowToReclamoImagen)
     }
 }

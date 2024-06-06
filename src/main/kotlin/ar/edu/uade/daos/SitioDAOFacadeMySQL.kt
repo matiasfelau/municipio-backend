@@ -51,5 +51,9 @@ class SitioDAOFacadeMySQL: SitioDAOFacade {
         }
         insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToSitio)
     }
+
+    override suspend fun getSitioById(idSitio: Int): Sitio? = dbQuery {
+        Sitios.select { Sitios.idSitio eq idSitio }.map(::resultRowToSitio).singleOrNull()
+    }
 }
 

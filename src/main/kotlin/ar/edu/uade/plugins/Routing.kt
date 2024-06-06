@@ -2,6 +2,7 @@ package ar.edu.uade.plugins
 
 import ar.edu.uade.routes.*
 import ar.edu.uade.services.*
+import ar.edu.uade.utilities.CloudinaryConfig
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -16,7 +17,8 @@ fun Application.configureRouting(
     reclamoService: ReclamoService,
     desperfectoService: DesperfectoService,
     sitioService: SitioService,
-    rubroService: RubroService
+    rubroService: RubroService,
+    cloudinaryConfig: CloudinaryConfig
     ) {
     routing {
         get("/") {
@@ -25,7 +27,7 @@ fun Application.configureRouting(
         credencialRouting(credencialService, credencialJWTService)
         empleadoRouting(empleadoService, empleadoJWTService)
         vecinoRouting(vecinoService, credencialService)
-        reclamoRouting(jwtService, reclamoService)
+        reclamoRouting(jwtService, reclamoService, cloudinaryConfig)
         desperfectoRouting(jwtService,desperfectoService)
         rubroRouting(jwtService,rubroService)
         sitioRouting(jwtService,sitioService)

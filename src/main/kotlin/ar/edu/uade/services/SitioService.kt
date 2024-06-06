@@ -16,4 +16,7 @@ class SitioService (config: ApplicationConfig){
     suspend fun addSitio(sitio: Sitio): Int?{
         return dao.addNewSitio(sitio)?.idSitio
     }
+    suspend fun getSitio(idSitio: Int): Sitio?{
+        return dao.getSitioById(idSitio)
+    }
 }

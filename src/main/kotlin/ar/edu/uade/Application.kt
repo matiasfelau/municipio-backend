@@ -4,6 +4,7 @@ import ar.edu.uade.plugins.*
 import io.ktor.server.application.*
 import ar.edu.uade.databases.MySQLSingleton
 import ar.edu.uade.services.*
+import ar.edu.uade.utilities.CloudinaryConfig
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.plugins.contentnegotiation.*
 
@@ -22,7 +23,8 @@ fun Application.module() {
     val desperfectoService = DesperfectoService(environment.config)
     val rubroService = RubroService(environment.config)
     val sitioService = SitioService(environment.config)
+    val cloudinary = CloudinaryConfig(this)
     configureSecurity(credencialJWTService, empleadoJWTService)
-    configureRouting(credencialService, credencialJWTService, empleadoService, empleadoJWTService, vecinoService, jwtService, reclamoService, desperfectoService, sitioService, rubroService)
+    configureRouting(credencialService, credencialJWTService, empleadoService, empleadoJWTService, vecinoService, jwtService, reclamoService, desperfectoService, sitioService, rubroService, cloudinary)
 
 }

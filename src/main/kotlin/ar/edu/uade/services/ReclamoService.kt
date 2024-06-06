@@ -51,4 +51,12 @@ class ReclamoService(config: ApplicationConfig) {
         println(resultado)
         return ceil(resultado).toInt()
     }
+
+    suspend fun getFotos(id: Int): MutableList<String> {
+        val resultado: MutableList<String> = ArrayList()
+        for (foto in dao.getFotosById(id)) {
+            resultado.add(foto.urlImagen)
+        }
+        return resultado
+    }
 }

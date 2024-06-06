@@ -3,6 +3,7 @@ package ar.edu.uade.routes
 
 import ar.edu.uade.mappers.requests.SitioRequest
 import ar.edu.uade.mappers.responses.SitioResponse
+import ar.edu.uade.mappers.responses.SitioResponse2
 import ar.edu.uade.models.Reclamo
 import ar.edu.uade.models.Sitio
 
@@ -86,6 +87,35 @@ fun Route.sitioRouting(jwtService: JWTService, sitioService: SitioService) {
         }
         call.respond(result)
     }
+
+    get("$ruta/particular"+"/{idSitio}"){
+        try{
+            val idSitio = call.parameters["idSitio"]?.toIntOrNull()
+            if (idSitio != null) {
+                val encontrado = sitioService.getSitio(idSitio)
+                if (encontrado != null) {
+                    val resultado = sitioToResponse2(encontrado)
+                    call.response.status(HttpStatusCode.OK)
+                    call.respond(resultado)
+                } else {
+                    call.response.status(HttpStatusCode.NotFound)
+                }
+            } else {
+                call.response.status(HttpStatusCode.BadRequest)
+            }
+        } catch (exposedSQLException: ExposedSQLException) {
+            call.response.status(HttpStatusCode.BadRequest)
+            println("\n--------------------" +
+                    "\nSTATUS:SITIO BAD REQUEST" +
+                    "\n--------------------")
+        } catch (exception: Exception) {
+            call.response.status(HttpStatusCode.InternalServerError)
+            println("\n--------------------" +
+                    "\nSTATUS:SITIO INTERNAL SERVER ERROR" +
+                    "\n--------------------")
+            exception.printStackTrace()
+        }
+    }
 }
 
 private fun requestToSitio(sitio: SitioRequest): Sitio {
@@ -109,5 +139,13 @@ private fun sitioToResponse(sitio: Sitio): SitioResponse {
     return SitioResponse(
         sitio.idSitio!!,
         sitio.descripcion
+    )
+}
+
+private fun sitioToResponse2(sitio: Sitio): SitioResponse2 {
+    return SitioResponse2(
+        sitio.idSitio,
+        sitio.latitud,
+        sitio.longitud
     )
 }
