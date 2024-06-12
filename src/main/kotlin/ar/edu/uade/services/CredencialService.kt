@@ -20,14 +20,11 @@ class CredencialService(config: ApplicationConfig) {
     private val credencialDAO : CredencialDAOFacade = CredencialDAOFacadeMySQLImpl()
     private val vecinoDAO : VecinoDAOFacade = VecinoDAOFacadeMySQLImpl()
 
-    suspend fun solicitarCredencial(documento: String, email: String) : Boolean {
-        var bool = false
+    suspend fun solicitarCredencial(documento: String, email: String) : Credencial? {
         if (vecinoDAO.verifyVecino(documento)) {
-            if (credencialDAO.addNewCredencial(documento, email) != null) {
-                bool = true
-            }
+            return credencialDAO.addNewCredencial(documento, email)
         }
-        return bool
+        return null
     }
 
     suspend fun habilitarCredencial(credencial: Credencial): Boolean {
@@ -91,6 +88,9 @@ class CredencialService(config: ApplicationConfig) {
                 val primerIngreso = false
                 if (credencial.password != "") {
                     password = credencial.password
+                }
+                else {
+                    password = bd.password
                 }
                 bool = password?.let {
                     credencialDAO.editPrimerIngresoCredencial(credencial.documento,

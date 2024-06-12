@@ -16,38 +16,155 @@ fun Route.credencialRouting(credencialService: CredencialService, credencialJwtS
     post("/vecino/registro") {
         try {
             val request = call.receive<CredencialRequest>()
-            val boolean = credencialService.solicitarCredencial(request.documento, request.email);
-            call.response.status(HttpStatusCode.Created)
-            call.respond(boolean)
-        } catch (e: Exception) {
-            call.respond(false)
+            val credencial = credencialService.solicitarCredencial(request.documento, request.email)
+            if (credencial != null) {
+                call.response.status(HttpStatusCode.Created)
+                println("\n--------------------" +
+                        "\nACTOR:REGISTRO CREDENCIAL VECINO" +
+                        "\nSTATUS:CREATED" +
+                        "\n--------------------" +
+                        "\nDATOS:${credencial.documento},${credencial.email}" +
+                        "\n--------------------"
+                )
+            }
+            else {
+                call.response.status(HttpStatusCode.BadRequest)
+                println("\n--------------------" +
+                        "\nACTOR:REGISTRO CREDENCIAL VECINO" +
+                        "\nSTATUS:BAD REQUEST" +
+                        "\n--------------------" +
+                        "\nDATOS:${request.documento},${request.email}" +
+                        "\n--------------------"
+                )
+            }
         }
+        catch (nullPointerException: NullPointerException) {
+            call.response.status(HttpStatusCode.BadRequest)
+            println("\n--------------------" +
+                    "\nACTOR:REGISTRO CREDENCIAL VECINO" +
+                    "\nSTATUS:BAD REQUEST" +
+                    "\n--------------------" +
+                    "\nERROR:${nullPointerException.message}" +
+                    "\n--------------------"
+            )
+        }
+        catch (exception: Exception) {
+            call.response.status(HttpStatusCode.InternalServerError)
+            println("\n--------------------" +
+                    "\nACTOR:REGISTRO CREDENCIAL VECINO" +
+                    "\nSTATUS:INTERNAL SERVER ERROR" +
+                    "\n--------------------" +
+                    "\nERROR:${exception.message}" +
+                    "\n--------------------"
+            )
+        }
+        call.respond(true)
     }
 
     get("/vecino/habilitacion/{documento}") {
-        var bool = false
         try {
             val documento = call.parameters["documento"]
-            val bd = documento?.let { d -> credencialService.find(d) }
-            if (bd != null) {
-                bool = credencialService.habilitarCredencial(bd)
-                call.respond(bool)
-            } else {
-                call.respond(bool)
+            if (documento != null) {
+                val credencial = credencialService.find(documento)
+                if (credencial != null) {
+                    if (credencialService.habilitarCredencial(credencial)) {
+                        call.response.status(HttpStatusCode.OK)
+                        println(
+                            "\n--------------------" +
+                                    "\nACTOR:HABILITACION CREDENCIAL VECINO" +
+                                    "\nSTATUS:OK" +
+                                    "\n--------------------" +
+                                    "\nDATOS:${credencial.documento}" +
+                                    "\n--------------------"
+                        )
+                    }
+                    else {
+                        call.response.status(HttpStatusCode.BadRequest)
+                        println(
+                            "\n--------------------" +
+                                    "\nACTOR:HABILITACION_CREDENCIAL_VECINO" +
+                                    "\nSTATUS:BAD_REQUEST" +
+                                    "\n--------------------" +
+                                    "\nDATOS:${credencial.documento}" +
+                                    "\n--------------------"
+                        )
+                    }
+                }
+                else {
+                    call.response.status(HttpStatusCode.NotFound)
+                    println(
+                        "\n--------------------" +
+                                "\nACTOR:HABILITACION_CREDENCIAL_VECINO" +
+                                "\nSTATUS:NOT_FOUND" +
+                                "\n--------------------" +
+                                "\nDATOS:${documento}" +
+                                "\n--------------------"
+                    )
+                }
             }
-        } catch (e: Exception) {
-            call.respond(bool)
+            else {
+                call.response.status(HttpStatusCode.BadRequest)
+                println(
+                    "\n--------------------" +
+                            "\nACTOR:HABILITACION_CREDENCIAL_VECINO" +
+                            "\nSTATUS:BAD_REQUEST" +
+                            "\n--------------------" +
+                            "\nDATOS:${documento}" +
+                            "\n--------------------"
+                )
+            }
         }
+        catch (exception: Exception) {
+            call.response.status(HttpStatusCode.InternalServerError)
+            println(
+                "\n--------------------" +
+                        "\nACTOR:HABILITACION_CREDENCIAL_VECINO" +
+                        "\nSTATUS:INTERNAL_SERVER_ERROR" +
+                        "\n--------------------" +
+                        "\nERROR:${exception.message}" +
+                        "\n--------------------"
+            )
+        }
+        call.respond(true)
     }
 
     put("/vecino/primer-ingreso") {
         try {
             val request = call.receive<CredencialRequest>()
-            credencialService.casoPrimerIngresoCredencial(request)
-            call.respond(true)
-        } catch (e: Exception) {
-            call.respond(false)
+            if (credencialService.casoPrimerIngresoCredencial(request)) {
+                call.response.status(HttpStatusCode.OK)
+                println(
+                    "\n--------------------" +
+                            "\nACTOR:PRIMER_INGRESO_MODIFICACION_CREDENCIAL_VECINO" +
+                            "\nSTATUS:OK" +
+                            "\n--------------------" +
+                            "\nDATOS:${request.documento}" +
+                            "\n--------------------"
+                )
+            }
+            else {
+                call.response.status(HttpStatusCode.BadRequest)
+                println(
+                    "\n--------------------" +
+                            "\nACTOR:PRIMER_INGRESO_MODIFICACION_CREDENCIAL_VECINO" +
+                            "\nSTATUS:BAD_REQUEST" +
+                            "\n--------------------" +
+                            "\nDATOS:${request.documento}" +
+                            "\n--------------------"
+                )
+            }
+        } catch (exception: Exception) {
+            call.response.status(HttpStatusCode.InternalServerError)
+            println(
+                "\n--------------------" +
+                        "\nACTOR:PRIMER_INGRESO_MODIFICACION_CREDENCIAL_VECINO" +
+                        "\nSTATUS:INTERNAL_SERVER_ERROR" +
+                        "\n--------------------" +
+                        "\nERROR:${exception.message}" +
+                        "\n--------------------"
+            )
         }
+        call.respond(true)
     }
 
     post("/vecino/ingreso") {
@@ -55,9 +172,9 @@ fun Route.credencialRouting(credencialService: CredencialService, credencialJwtS
             val request = call.receive<CredencialRequest>()
             val token: String? = credencialJwtService.createJwtToken(request)
             token?.let {
+                call.response.status(HttpStatusCode.OK)
                 call.respond(hashMapOf("token" to token))
             } ?: call.respond(message = HttpStatusCode.Unauthorized)
-
         } catch (e: Exception) {
             call.respond(message = HttpStatusCode.InternalServerError)
         }
@@ -66,35 +183,134 @@ fun Route.credencialRouting(credencialService: CredencialService, credencialJwtS
     get("/vecino/confirmar-primer-ingreso/{documento}") {
         try {
             val documento = call.parameters["documento"]
-            val bd = documento?.let { d -> credencialService.find(d) }
-            if (bd != null) {
-                call.respond(bd.primerIngreso)
-            } else {
-                call.respond(false)
+            if (documento != null) {
+                val credencial = credencialService.find(documento)
+                if (credencial != null) {
+                    if (credencial.primerIngreso) {
+                        call.response.status(HttpStatusCode.OK)
+                        println(
+                            "\n--------------------" +
+                                    "\nACTOR:CONFIRMACION_PRIMER_INGRESO_CREDENCIAL_VECINO" +
+                                    "\nSTATUS:OK" +
+                                    "\n--------------------" +
+                                    "\nDATOS:${credencial.documento}" +
+                                    "\n--------------------"
+                        )
+                    }
+                    else {
+                        call.response.status(HttpStatusCode.BadRequest)
+                        println(
+                            "\n--------------------" +
+                                    "\nACTOR:CONFIRMACION_PRIMER_INGRESO_CREDENCIAL_VECINO" +
+                                    "\nSTATUS:BAD_REQUEST" +
+                                    "\n--------------------" +
+                                    "\nDATOS:${credencial.documento}" +
+                                    "\n--------------------"
+                        )
+                    }
+                }
+                else {
+                    call.response.status(HttpStatusCode.NotFound)
+                    println(
+                        "\n--------------------" +
+                                "\nACTOR:CONFIRMACION_PRIMER_INGRESO_CREDENCIAL_VECINO" +
+                                "\nSTATUS:NOT_FOUND" +
+                                "\n--------------------" +
+                                "\nDATOS:${documento}" +
+                                "\n--------------------"
+                    )
+                }
             }
-        } catch (e: Exception) {
-            call.respond(false)
+            else {
+                call.response.status(HttpStatusCode.BadRequest)
+                println(
+                    "\n--------------------" +
+                            "\nACTOR:CONFIRMACION_PRIMER_INGRESO_CREDENCIAL_VECINO" +
+                            "\nSTATUS:BAD_REQUEST" +
+                            "\n--------------------" +
+                            "\nDATOS:${documento}" +
+                            "\n--------------------"
+                )
+            }
         }
+        catch (exception: Exception) {
+            call.response.status(HttpStatusCode.InternalServerError)
+            println(
+                "\n--------------------" +
+                        "\nACTOR:CONFIRMACION_PRIMER_INGRESO_CREDENCIAL_VECINO" +
+                        "\nSTATUS:INTERNAL_SERVER_ERROR" +
+                        "\n--------------------" +
+                        "\nERROR:${exception.message}" +
+                        "\n--------------------"
+            )
+        }
+        call.respond(true)
     }
 
     put("/vecino/recuperacion") {
-        var bool = false
         try {
             val request = call.receive<CredencialRequest>()
-            val bd = credencialService.find(request.documento)
-            if (bd != null) {
-                if (request.email == bd.email) {
-                    bool = credencialService.recuperarCredencial(bd)
-                    call.respond(bool)
-                } else {
-                    call.respond(false)
+            val credencial = credencialService.find(request.documento)
+            if (credencial != null) {
+                if (request.email == credencial.email) {
+                    if (credencialService.recuperarCredencial(credencial)) {
+                        call.response.status(HttpStatusCode.OK)
+                        println(
+                            "\n--------------------" +
+                                    "\nACTOR:RECUPERACION_CREDENCIAL_VECINO" +
+                                    "\nSTATUS:OK" +
+                                    "\n--------------------" +
+                                    "\nDATOS:${credencial.documento},${credencial.email}" +
+                                    "\n--------------------"
+                        )
+                    }
+                    else {
+                        call.response.status(HttpStatusCode.BadRequest)
+                        println(
+                            "\n--------------------" +
+                                    "\nACTOR:RECUPERACION_CREDENCIAL_VECINO" +
+                                    "\nSTATUS:BAD_REQUEST" +
+                                    "\n--------------------" +
+                                    "\nDATOS:${credencial.documento},${credencial.email}" +
+                                    "\n--------------------"
+                        )
+                    }
                 }
-            } else {
-                call.respond(bool)
+                else {
+                    call.response.status(HttpStatusCode.BadRequest)
+                    println(
+                        "\n--------------------" +
+                                "\nACTOR:RECUPERACION_CREDENCIAL_VECINO" +
+                                "\nSTATUS:BAD_REQUEST" +
+                                "\n--------------------" +
+                                "\nDATOS:${credencial.documento},${credencial.email}" +
+                                "\n--------------------"
+                    )
+                }
             }
-        } catch (e: Exception) {
-            call.respond(bool)
+            else {
+                call.response.status(HttpStatusCode.NotFound)
+                println(
+                    "\n--------------------" +
+                            "\nACTOR:RECUPERACION_CREDENCIAL_VECINO" +
+                            "\nSTATUS:NOT_FOUND" +
+                            "\n--------------------" +
+                            "\nDATOS:${request.documento}" +
+                            "\n--------------------"
+                )
+            }
+        } catch (exception: Exception) {
+            call.response.status(HttpStatusCode.InternalServerError)
+            println(
+                "\n--------------------" +
+                        "\nACTOR:RECUPERACION_CREDENCIAL_VECINO" +
+                        "\nSTATUS:INTERNAL_SERVER_ERROR" +
+                        "\n--------------------" +
+                        "\nERROR:${exception.message}" +
+                        "\n--------------------"
+            )
         }
+        call.respond(true)
     }
 }
 

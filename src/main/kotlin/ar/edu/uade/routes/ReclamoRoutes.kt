@@ -38,37 +38,34 @@ fun Route.reclamoRouting(jwtService: JWTService, reclamoService: ReclamoService,
                         resultado.add(reclamoToResponse(reclamo))
                     }
                     call.response.status(HttpStatusCode.OK)
-                    println(
-                        "\n--------------------" +
-                                "\nSTATUS:OK" +
-                                "\n--------------------" +
-                                "\nUSUARIO:${autenticacion.tipo}" +
-                                "\nFILTRO:${filtro.tipo},${filtro.dato}" +
-                                "\nPAGINA:${pagina}" +
-                                "\n--------------------"
-                    )
-                } else {
-                    call.response.status(HttpStatusCode.Forbidden)
-                    println(
-                        "\n--------------------" +
-                                "\nSTATUS:FORBIDDEN" +
-                                "\n--------------------" +
-                                "\nUSUARIO:${autenticacion.tipo}" +
-                                "\nFILTRO:${filtro.tipo},${filtro.dato}" +
-                                "\nPAGINA:${pagina}" +
-                                "\n--------------------"
-                    )
-                }
-            } else {
-                call.response.status(HttpStatusCode.Unauthorized)
-                println(
-                    "\n--------------------" +
-                            "\nSTATUS:UNAUTHORIZED" +
+                    println("\n--------------------" +
+                            "\nSTATUS:OK" +
                             "\n--------------------" +
                             "\nUSUARIO:${autenticacion.tipo}" +
                             "\nFILTRO:${filtro.tipo},${filtro.dato}" +
                             "\nPAGINA:${pagina}" +
                             "\n--------------------"
+                    )
+                } else {
+                    call.response.status(HttpStatusCode.Forbidden)
+                    println("\n--------------------" +
+                            "\nSTATUS:FORBIDDEN" +
+                            "\n--------------------" +
+                            "\nUSUARIO:${autenticacion.tipo}" +
+                            "\nFILTRO:${filtro.tipo},${filtro.dato}" +
+                            "\nPAGINA:${pagina}" +
+                            "\n--------------------"
+                    )
+                }
+            } else {
+                call.response.status(HttpStatusCode.Unauthorized)
+                println("\n--------------------" +
+                        "\nSTATUS:UNAUTHORIZED" +
+                        "\n--------------------" +
+                        "\nUSUARIO:${autenticacion.tipo}" +
+                        "\nFILTRO:${filtro.tipo},${filtro.dato}" +
+                        "\nPAGINA:${pagina}" +
+                        "\n--------------------"
                 )
             }
         } catch (exposedSQLException: ExposedSQLException) {
@@ -125,36 +122,32 @@ fun Route.reclamoRouting(jwtService: JWTService, reclamoService: ReclamoService,
             if (jwtService.validateToken(autenticacion.token)) {
                 result = reclamoService.createReclamo(requestToReclamo(reclamoRQ))
                 call.response.status(HttpStatusCode.Created)
-                println(
-                    "\n--------------------" +
-                            "\nSTATUS:RECLAMO CREATED" +
-                            "\n--------------------"
+                println("\n--------------------" +
+                        "\nSTATUS:RECLAMO CREATED" +
+                        "\n--------------------"
                 )
                 if (result != null) {
                     call.respond(reclamoToResponse(result))
                 }
             } else {
                 call.response.status(HttpStatusCode.Unauthorized)
-                println(
-                    "\n--------------------" +
-                            "\nSTATUS:RECLAMO UNAUTHORIZED" +
-                            "\n--------------------"
+                println("\n--------------------" +
+                        "\nSTATUS:RECLAMO UNAUTHORIZED" +
+                        "\n--------------------"
                 )
             }
         } catch (exposedSQLException: ExposedSQLException) {
             call.response.status(HttpStatusCode.BadRequest)
-            println(
-                "\n--------------------" +
-                        "\nSTATUS:RECLAMO BAD REQUEST" +
-                        "\n--------------------"
+            println("\n--------------------" +
+                    "\nSTATUS:RECLAMO BAD REQUEST" +
+                    "\n--------------------"
             )
             exposedSQLException.printStackTrace()
         } catch (exception: Exception) {
             call.response.status(HttpStatusCode.InternalServerError)
-            println(
-                "\n--------------------" +
-                        "\nSTATUS:RECLAMO INTERNAL SERVER ERROR" +
-                        "\n--------------------"
+            println("\n--------------------" +
+                    "\nSTATUS:RECLAMO INTERNAL SERVER ERROR" +
+                    "\n--------------------"
             )
             exception.printStackTrace()
         }
@@ -213,54 +206,56 @@ fun Route.reclamoRouting(jwtService: JWTService, reclamoService: ReclamoService,
                     call.response.status(HttpStatusCode.OK)
                     call.respond(cantPaginas)
 
-                    println(
-                        "\n--------------------" +
-                                "\nSTATUS:OK" +
-                                "\n--------------------" +
-                                "\nUSUARIO:${body.autenticacion.tipo}" +
-                                "\nFILTRO:${body.filtro.tipo},${body.filtro.dato}" +
-                                "\nCANTIDAD DE PAGINAS:${cantPaginas}" +
-                                "\n--------------------"
+                    println("\n--------------------" +
+                            "\nACTOR:PAGINAS RECLAMO" +
+                            "\nSTATUS:OK" +
+                            "\n--------------------" +
+                            "\nUSUARIO:${body.autenticacion.tipo}" +
+                            "\nFILTRO:${body.filtro.tipo},${body.filtro.dato}" +
+                            "\nCANTIDAD DE PAGINAS:${cantPaginas}" +
+                            "\n--------------------"
                     )
                 } else {
                     call.response.status(HttpStatusCode.Forbidden)
-                    println(
-                        "\n--------------------" +
-                                "\nSTATUS:FORBIDDEN" +
-                                "\n--------------------" +
-                                "\nUSUARIO:${body.autenticacion.tipo}" +
-                                "\nFILTRO:${body.filtro.tipo},${body.filtro.dato}" +
-                                "\n--------------------"
+                    println("\n--------------------" +
+                            "\nACTOR:PAGINAS RECLAMO" +
+                            "\nSTATUS:FORBIDDEN" +
+                            "\n--------------------" +
+                            "\nUSUARIO:${body.autenticacion.tipo}" +
+                            "\nFILTRO:${body.filtro.tipo},${body.filtro.dato}" +
+                            "\n--------------------"
                     )
                 }
 
             } else {
                 call.response.status(HttpStatusCode.Unauthorized)
-                println(
-                    "\n--------------------" +
-                            "\nSTATUS:UNAUTHORIZED" +
-                            "\n--------------------" +
-                            "\nUSUARIO:${body.autenticacion.tipo}" +
-                            "\nFILTRO:${body.filtro.tipo},${body.filtro.dato}" +
-                            "\n--------------------"
+                println("\n--------------------" +
+                        "\nACTOR:PAGINAS RECLAMO" +
+                        "\nSTATUS:UNAUTHORIZED" +
+                        "\n--------------------" +
+                        "\nUSUARIO:${body.autenticacion.tipo}" +
+                        "\nFILTRO:${body.filtro.tipo},${body.filtro.dato}" +
+                        "\n--------------------"
                 )
             }
         } catch (exposedSQLException: ExposedSQLException) {
             call.response.status(HttpStatusCode.BadRequest)
-            println(
-                "\n--------------------" +
-                        "\nSTATUS:BAD REQUEST" +
-                        "\n--------------------"
+            println("\n--------------------" +
+                    "\nACTOR:PAGINAS RECLAMO" +
+                    "\nSTATUS:BAD REQUEST" +
+                    "\n--------------------" +
+                    "\n${exposedSQLException.message}" +
+                    "\n--------------------"
             )
         } catch (exception: Exception) {
             call.response.status(HttpStatusCode.InternalServerError)
-            println(
-                "\n--------------------" +
-                        "\nSTATUS:INTERNAL SERVER ERROR" +
-                        "\n--------------------"
+            println("\n--------------------" +
+                    "\nACTOR:PAGINAS RECLAMO" +
+                    "\nSTATUS:INTERNAL SERVER ERROR" +
+                    "\n--------------------" +
+                    "\n${exception.message}" +
+                    "\n--------------------"
             )
-            println(exception.message)
-            exception.printStackTrace()
         }
     }
 
@@ -271,15 +266,16 @@ fun Route.reclamoRouting(jwtService: JWTService, reclamoService: ReclamoService,
             if (id != null) {
                 resultado = reclamoService.getFotos(id)
                 call.response.status(HttpStatusCode.OK)
+                call.respond(resultado)
                 println("\n--------------------" +
-                        "\nACTOR:FOTOS" +
+                        "\nACTOR:FOTOS RECLAMO" +
                         "\nSTATUS:OK" +
                         "\n--------------------"
                 )
             } else {
                 call.response.status(HttpStatusCode.BadRequest)
                 println("\n--------------------" +
-                        "\nACTOR:FOTOS" +
+                        "\nACTOR:FOTOS RECLAMO" +
                         "\nSTATUS:BAD_REQUEST" +
                         "\n--------------------" +
                         "\nEL ID DEL RECLAMO ES:${id}" +
@@ -289,7 +285,7 @@ fun Route.reclamoRouting(jwtService: JWTService, reclamoService: ReclamoService,
         } catch (exposedSQLException: ExposedSQLException) {
             call.response.status(HttpStatusCode.BadRequest)
             println("\n--------------------" +
-                    "\nACTOR:FOTOS" +
+                    "\nACTOR:FOTOS RECLAMO" +
                     "\nSTATUS:BAD_REQUEST" +
                     "\n--------------------" +
                     "\n${exposedSQLException.message}" +
@@ -299,7 +295,7 @@ fun Route.reclamoRouting(jwtService: JWTService, reclamoService: ReclamoService,
         } catch (exception: Exception) {
             call.response.status(HttpStatusCode.InternalServerError)
             println("\n--------------------" +
-                    "\nACTOR:FOTOS" +
+                    "\nACTOR:FOTOS RECLAMO" +
                     "\nSTATUS:INTERNAL_SERVER_ERROR" +
                     "\n--------------------" +
                     "\n${exception.message}" +
