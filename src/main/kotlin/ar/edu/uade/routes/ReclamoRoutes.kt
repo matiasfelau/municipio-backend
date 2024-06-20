@@ -44,6 +44,8 @@ fun Route.reclamoRouting(jwtService: JWTService, reclamoService: ReclamoService,
                             "\nUSUARIO:${autenticacion.tipo}" +
                             "\nFILTRO:${filtro.tipo},${filtro.dato}" +
                             "\nPAGINA:${pagina}" +
+                            "\n--------------------" +
+                            "\nRESULTADO:${resultado}" +
                             "\n--------------------"
                     )
                 } else {

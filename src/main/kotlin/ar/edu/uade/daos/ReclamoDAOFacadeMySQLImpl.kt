@@ -37,11 +37,21 @@ class ReclamoDAOFacadeMySQLImpl: ReclamoDAOFacade {
 
     override suspend fun get10ReclamosBySector(pagina: Int, sector: String): List<Reclamo> = dbQuery {
         val offset = (pagina - 1) * 10
+        /*
         Reclamos.join(Desperfectos, JoinType.INNER, additionalConstraint = { Reclamos.idDesperfecto eq Desperfectos.idDesperfecto })
             .join(Rubros, JoinType.INNER, additionalConstraint = { Desperfectos.idRubro eq Rubros.idRubro })
-            .select { Rubros.descripcion like sector }
+            .select { Rubros.descripcion like "%$sector%" }
             .limit(10, offset.toLong())
             .map(::resultRowToReclamo)
+
+         */
+        val cleanedSector = sector.replace(Regex("[\\n\\t\\r]"), "").trim()
+        val query = Reclamos.join(Desperfectos, JoinType.INNER, additionalConstraint = { Reclamos.idDesperfecto eq Desperfectos.idDesperfecto })
+            .join(Rubros, JoinType.INNER, additionalConstraint = { Desperfectos.idRubro eq Rubros.idRubro })
+            .select { Rubros.descripcion like "%$cleanedSector%" }
+            .limit(10, offset.toLong())
+        println(query.prepareSQL(QueryBuilder(false))) // Para loguear la consulta SQL
+        query.map(::resultRowToReclamo)
     }
 
     override suspend fun get10ReclamosByDocumento(pagina: Int, documento: String): List<Reclamo> = dbQuery {

@@ -10,7 +10,7 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalSerializationApi::class)
-@Serializer(forClass = LocalTime::class)
+@Serializer(forClass = LocalDateTime::class)
 object LocalDateTimeComponentSerializable : KSerializer<LocalDateTime> {
     private val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
 

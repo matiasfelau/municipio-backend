@@ -9,6 +9,7 @@ plugins {
     kotlin("jvm") version "1.9.23"
     id("io.ktor.plugin") version "2.3.9"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.9.23"
+
 }
 
 group = "ar.edu.uade"
@@ -60,6 +61,9 @@ dependencies {
     implementation("com.cloudinary:cloudinary-http44:1.38.0")
     implementation("com.cloudinary:cloudinary-taglib:1.38.0")
     implementation("io.github.cdimascio:dotenv-java:2.2.4")
+
+    //notis
+    implementation("com.google.firebase:firebase-admin:9.0.0")  // check for the latest version
 
 
     testImplementation("io.ktor:ktor-server-tests-jvm")

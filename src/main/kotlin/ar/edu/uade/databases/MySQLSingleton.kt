@@ -26,6 +26,8 @@ object MySQLSingleton {
             SchemaUtils.create(Reclamo.Reclamos)
             SchemaUtils.create(PermanenciaSitio.PermanenciaSitios)
             SchemaUtils.create(ReclamoImagen.ReclamoImagenes)
+            SchemaUtils.create(MovimientoReclamo.MovimientosReclamo)
+            SchemaUtils.create(DocumentoToken.TDocumentoToken)
         }
     }
 
