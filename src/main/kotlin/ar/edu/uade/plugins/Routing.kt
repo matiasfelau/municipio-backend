@@ -29,7 +29,7 @@ fun Application.configureRouting(
         credencialRouting(credencialService, credencialJWTService)
         empleadoRouting(empleadoService, empleadoJWTService)
         vecinoRouting(vecinoService, credencialService)
-        reclamoRouting(jwtService, reclamoService, cloudinaryConfig)
+        reclamoRouting(jwtService, reclamoService, movimientoReclamoService, cloudinaryConfig)
         desperfectoRouting(jwtService,desperfectoService)
         rubroRouting(jwtService,rubroService)
         sitioRouting(jwtService,sitioService)

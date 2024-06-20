@@ -4,6 +4,7 @@ import ar.edu.uade.mappers.requests.ReclamoRequest
 import ar.edu.uade.mappers.responses.ReclamoResponse
 import ar.edu.uade.models.Reclamo
 import ar.edu.uade.services.JWTService
+import ar.edu.uade.services.MovimientoReclamoService
 import ar.edu.uade.services.ReclamoService
 import ar.edu.uade.utilities.Autenticacion
 import ar.edu.uade.utilities.CloudinaryConfig
@@ -18,10 +19,12 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.jetbrains.exposed.exceptions.ExposedSQLException
+import ar.edu.uade.mappers.responses.MovimientoReclamoResponse
+import ar.edu.uade.models.MovimientoReclamo
 import java.io.File
 
 
-fun Route.reclamoRouting(jwtService: JWTService, reclamoService: ReclamoService, cloudinaryConfig: CloudinaryConfig) {
+fun Route.reclamoRouting(jwtService: JWTService, reclamoService: ReclamoService, movimientoReclamoService: MovimientoReclamoService, cloudinaryConfig: CloudinaryConfig) {
     val ruta = "/reclamo"
 
     put("$ruta/todos/{pagina}") {
@@ -306,6 +309,68 @@ fun Route.reclamoRouting(jwtService: JWTService, reclamoService: ReclamoService,
         }
         call.respond(resultado)
     }
+
+    get("$ruta/movimientos/{idReclamo}"){
+        try{
+            val movimientosReclamo = call.parameters["idReclamo"]?.toIntOrNull()
+                ?.let { it1 -> movimientoReclamoService.getMovimientosReclamo(it1) }
+            var resultado: MutableList<MovimientoReclamoResponse> = ArrayList<MovimientoReclamoResponse>()
+            if (movimientosReclamo != null) {
+                for (m in movimientosReclamo){
+                    resultado.add(movimientoToResponse(m))
+
+                }
+                call.response.status(HttpStatusCode.OK)
+                println("BRODE UHH")
+                println(resultado)
+                call.respond(resultado)
+            }
+            else {
+                call.response.status(HttpStatusCode.BadRequest)
+                println("BRODE UHH 2")
+            }
+
+        }catch (nullexcedException: NullPointerException){
+            call.response.status(HttpStatusCode.BadRequest)
+            println("\n--------------------" +
+                    "\nACTOR:MOVIMIENTOS RECLAMO" +
+                    "\nSTATUS:BAD_REQUEST" +
+                    "\n--------------------" +
+                    "\n${nullexcedException.message}" +
+                    "\n--------------------"
+
+            )
+        }catch (ex: ExposedSQLException){
+            call.response.status(HttpStatusCode.BadRequest)
+            println("\n--------------------" +
+                    "\nACTOR:MOVIMIENTOS RECLAMO" +
+                    "\nSTATUS:BAD_REQUEST" +
+                    "\n--------------------" +
+                    "\n${ex.message}" +
+                    "\n--------------------"
+
+            )
+        }catch(numberFormatException: NumberFormatException){
+            call.response.status(HttpStatusCode.BadRequest)
+            println("\n--------------------" +
+                    "\nACTOR:MOVIMIENTOS RECLAMO" +
+                    "\nSTATUS:BAD_REQUEST" +
+                    "\n--------------------" +
+                    "\n${numberFormatException.message}" +
+                    "\n--------------------"
+
+            )
+        }catch (ex: Exception){
+            call.response.status(HttpStatusCode.InternalServerError)
+            println("\n--------------------" +
+                    "\nACTOR:MOVIMIENTOS RECLAMO" +
+                    "\nSTATUS:INTERNAL_SERVER_ERROR" +
+                    "\n--------------------" +
+                    "\n${ex.message}" +
+                    "\n--------------------"
+            )
+        }
+    }
 }
 
 private fun requestToReclamo(reclamoRQ: ReclamoRequest): Reclamo {
@@ -327,5 +392,15 @@ private fun reclamoToResponse(reclamo: Reclamo): ReclamoResponse {
         reclamo.estado,
         reclamo.documento,
         reclamo.idSitio
+    )
+}
+
+private fun movimientoToResponse(movimientoReclamo: MovimientoReclamo): MovimientoReclamoResponse {
+    return MovimientoReclamoResponse(
+        movimientoReclamo.idMovimiento,
+        movimientoReclamo.responsable,
+        movimientoReclamo.causa,
+        movimientoReclamo.fecha,
+        movimientoReclamo.idReclamo
     )
 }
