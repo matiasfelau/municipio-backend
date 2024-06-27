@@ -19,7 +19,7 @@ data class VecinoDenunciado(
     public object VecinosDenunciados: Table(){
         val id = integer("id").autoIncrement()
         val idDenuncia = integer("id_denuncia").references(Denuncia.Denuncias.idDenuncia)
-        val documento = varchar("documento", 20).references(Vecinos.documento)
+        val documento = varchar("documento", 20).references(Vecinos.documento).nullable()
         val direccion = varchar("direccion", 150)
         val nombre = varchar("nombre", 150)
         val apellido = varchar("apellido", 150)

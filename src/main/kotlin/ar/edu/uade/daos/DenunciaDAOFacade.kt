@@ -1,13 +1,17 @@
 package ar.edu.uade.daos
 
+import ar.edu.uade.models.ComercioDenunciado
 import ar.edu.uade.models.Denuncia
 import ar.edu.uade.models.DenunciaImagen
+import ar.edu.uade.models.VecinoDenunciado
 
 interface DenunciaDAOFacade {
     suspend fun get10Denuncias(pagina: Int): List<Denuncia>
     suspend fun getDenunciaById(id: Int): Denuncia?
     //TODO Ver...
     suspend fun addDenuncia(denuncia: Denuncia): Denuncia?
+    suspend fun addComercioDenunciado(denuncia: Denuncia, comercioDenunciado: ComercioDenunciado)
+    suspend fun addVecinoDenunciado(denuncia: Denuncia, vecinoDenunciado: VecinoDenunciado)
     suspend fun addImagenToDenuncia(idDenuncia: Int, urlImagen: String)
     suspend fun getAllCantidadPaginas(): Int
     suspend fun getFotosById(id: Int): List<DenunciaImagen>

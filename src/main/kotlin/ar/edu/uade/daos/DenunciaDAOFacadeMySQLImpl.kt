@@ -1,9 +1,13 @@
 package ar.edu.uade.daos
 
 import ar.edu.uade.databases.MySQLSingleton.dbQuery
+import ar.edu.uade.models.ComercioDenunciado.*
+import ar.edu.uade.models.ComercioDenunciado
 import ar.edu.uade.models.Denuncia
 import ar.edu.uade.models.Denuncia.Denuncias
 import ar.edu.uade.models.DenunciaImagen
+import ar.edu.uade.models.VecinoDenunciado
+import ar.edu.uade.models.VecinoDenunciado.*
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
@@ -39,7 +43,6 @@ class DenunciaDAOFacadeMySQLImpl : DenunciaDAOFacade{
             .singleOrNull()
     }
 
-    //TODO Ver...
     override suspend fun addDenuncia(denuncia: Denuncia): Denuncia? = dbQuery {
         val insertStatement = Denuncias.insert{
             it[Denuncias.descripcion] = denuncia.descripcion
@@ -47,8 +50,27 @@ class DenunciaDAOFacadeMySQLImpl : DenunciaDAOFacade{
             it[Denuncias.aceptarResponsabilidad] = denuncia.aceptarResponsabilidad
             it[Denuncias.documento] = denuncia.documento
         }
+
         insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToDenuncia)
 
+    }
+
+    override suspend fun addComercioDenunciado(denuncia: Denuncia, comercioDenunciado: ComercioDenunciado){
+        val insertStatement = ComerciosDenunciados.insert {
+            it[ComerciosDenunciados.idComercio] = comercioDenunciado.idComercio
+            it[ComerciosDenunciados.idDenuncia] = denuncia.idDenuncia
+            it[ComerciosDenunciados.nombre] = comercioDenunciado.nombre
+            it[ComerciosDenunciados.direccion] = comercioDenunciado.direccion
+        }
+    }
+
+    override suspend fun addVecinoDenunciado(denuncia: Denuncia, vecinoDenunciado: VecinoDenunciado) {
+        val insertStatement = VecinosDenunciados.insert {
+            it[VecinosDenunciados.idDenuncia] = denuncia.idDenuncia
+            it[VecinosDenunciados.documento] =  vecinoDenunciado.documento
+            it[VecinosDenunciados.nombre] = vecinoDenunciado.nombre
+            it[VecinosDenunciados.direccion] = vecinoDenunciado.direccion
+        }
     }
 
     override suspend fun addImagenToDenuncia(idDenuncia: Int, urlImagen: String) = dbQuery {

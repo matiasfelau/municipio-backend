@@ -15,7 +15,8 @@ data class ComercioDenunciado(
 ): Serializable {
     public object ComerciosDenunciados: Table(){
         val id = integer("id").autoIncrement()
-        val idDenuncia = integer("id_denuncia").references(Denuncia.Denuncias.idDenuncia)
+        val idComercio = integer("idComercio").references(Comercio.Comercios.idComercio)
+        val idDenuncia = integer("idDenuncia").references(Denuncia.Denuncias.idDenuncia)
         val nombre = varchar("nombre", 150)
         val direccion = varchar("direccion", 150)
         override val primaryKey = PrimaryKey(id)
