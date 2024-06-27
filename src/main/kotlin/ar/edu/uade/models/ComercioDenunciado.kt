@@ -1,15 +1,11 @@
 package ar.edu.uade.models
 
-import ar.edu.uade.models.Vecino.Vecinos
-import ar.edu.uade.models.VecinoDenunciado.VecinosDenunciados.autoIncrement
-import ar.edu.uade.models.VecinoDenunciado.VecinosDenunciados.references
 import org.jetbrains.exposed.sql.Table
 import java.io.Serializable
 
 data class ComercioDenunciado(
-    val id: Int,
     val idComercio: Int,
-    val idDenuncia: Int,
+    val idDenuncia: Int?,
     val nombre: String,
     val direccion: String
 ): Serializable {

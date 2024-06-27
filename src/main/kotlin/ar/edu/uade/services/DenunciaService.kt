@@ -24,7 +24,7 @@ class DenunciaService(config: ApplicationConfig) {
     suspend fun addDenunciaComercio(denuncia: Denuncia,comercioDenunciado: ComercioDenunciado): Denuncia? {
         val denunciaDevuelta = dao.addDenuncia(denuncia)
         if (denunciaDevuelta != null) {
-            dao.addComercioDenunciado(denunciaDevuelta, comercioDenunciado)
+            denunciaDevuelta.idDenuncia?.let { dao.addComercioDenunciado(it, comercioDenunciado) }
         }
         return denunciaDevuelta
     }
@@ -32,7 +32,7 @@ class DenunciaService(config: ApplicationConfig) {
     suspend fun addDenunciaVecino(denuncia: Denuncia, vecinoDenunciado: VecinoDenunciado): Denuncia?{
         val denunciaDevuelta = dao.addDenuncia(denuncia)
         if (denunciaDevuelta != null) {
-            dao.addVecinoDenunciado(denunciaDevuelta, vecinoDenunciado)
+            denunciaDevuelta.idDenuncia?.let { dao.addVecinoDenunciado(it, vecinoDenunciado) }
         }
         return denunciaDevuelta
     }

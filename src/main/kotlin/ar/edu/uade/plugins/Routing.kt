@@ -35,6 +35,6 @@ fun Application.configureRouting(
         rubroRouting(jwtService,rubroService)
         sitioRouting(jwtService,sitioService)
         documentoTokenRouting(documentoTokenService)
-        denunciaRouting(jwtService,denunciaService,cloudinaryConfig)
+        denunciaRouting(jwtService,denunciaService,vecinoService,cloudinaryConfig)
     }
 }

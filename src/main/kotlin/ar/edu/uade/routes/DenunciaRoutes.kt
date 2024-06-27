@@ -1,22 +1,19 @@
 package ar.edu.uade.routes
 
-import ar.edu.uade.mappers.responses.ReclamoResponse
-import ar.edu.uade.mappers.serializables.ComercioDenunciadoSerializable
-import ar.edu.uade.mappers.serializables.DenunciaSerializable
-import ar.edu.uade.mappers.serializables.VecinoDenunciadoSerializable
+import ar.edu.uade.mappers.requests.ComercioDenunciadoRequest
+import ar.edu.uade.mappers.requests.DenunciaRequest
+import ar.edu.uade.mappers.requests.VecinoDenunciadoRequest
+import ar.edu.uade.mappers.responses.DenunciaResponse
 import ar.edu.uade.models.ComercioDenunciado
 import ar.edu.uade.models.Denuncia
 import ar.edu.uade.models.VecinoDenunciado
 import ar.edu.uade.services.DenunciaService
 import ar.edu.uade.services.JWTService
-import ar.edu.uade.services.MovimientoReclamoService
-import ar.edu.uade.services.ReclamoService
+import ar.edu.uade.services.VecinoService
 import ar.edu.uade.utilities.Autenticacion
 import ar.edu.uade.utilities.CloudinaryConfig
 import ar.edu.uade.utilities.containers.AutenticacionDenunciaComercio
 import ar.edu.uade.utilities.containers.AutenticacionDenunciaVecino
-import ar.edu.uade.utilities.containers.AutenticacionFiltro
-import ar.edu.uade.utilities.containers.AutenticacionReclamo
 import com.cloudinary.utils.ObjectUtils
 import io.ktor.http.*
 import io.ktor.http.content.*
@@ -27,18 +24,18 @@ import io.ktor.server.routing.*
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import java.io.File
 
-fun Route.denunciaRouting(jwtService: JWTService, denunciaService: DenunciaService, /* movimientoDenunciaService: MovimientoDenunciaService ,*/ cloudinaryConfig: CloudinaryConfig) {
+fun Route.denunciaRouting(jwtService: JWTService, denunciaService: DenunciaService, vecinoService: VecinoService, /* movimientoDenunciaService: MovimientoDenunciaService ,*/ cloudinaryConfig: CloudinaryConfig) {
     val ruta = "/denuncia"
 
     put("$ruta/todos/{pagina}") {
-        val resultado: MutableList<DenunciaSerializable> = ArrayList<DenunciaSerializable>()
+        val resultado: MutableList<DenunciaResponse> = ArrayList<DenunciaResponse>()
         try {
             val pagina = call.parameters["pagina"]!!.toInt()
             val auth = call.receive<Autenticacion>()
             if (jwtService.validateToken(auth.token)) {
                 val denuncias = denunciaService.getDenuncias(pagina)
                 for (d in denuncias) {
-                    resultado.add(denunciaToSerializable(d))
+                    resultado.add(denunciaToResponse(d))
                 }
                 call.response.status(HttpStatusCode.OK)
                 println(
@@ -82,14 +79,14 @@ fun Route.denunciaRouting(jwtService: JWTService, denunciaService: DenunciaServi
     }
 
     put("$ruta/particular/{id}") {
-        var resultado: DenunciaSerializable? = null
+        var resultado: DenunciaResponse? = null
         try {
             val id = call.parameters["id"]!!.toInt()
             val autenticacion = call.receive<Autenticacion>()
             if (jwtService.validateToken(autenticacion.token)) {
                 val denuncia = denunciaService.getDenunciaById(id)
                 if (denuncia != null) {
-                    resultado = denunciaToSerializable(denuncia)
+                    resultado = denunciaToResponse(denuncia)
                     call.response.status(HttpStatusCode.OK)
                 } else {
                     call.response.status(HttpStatusCode.NotFound)
@@ -114,10 +111,10 @@ fun Route.denunciaRouting(jwtService: JWTService, denunciaService: DenunciaServi
         try {
             val request = call.receive<AutenticacionDenunciaComercio>()
             val autenticacion = request.autenticacion
-            val denuncia = request.denunciaComercio
+            val denuncia = request.denuncia
             if (jwtService.validateToken(autenticacion.token)) {
                 result = denunciaService.addDenunciaComercio(
-                    serializableToDenuncia(denuncia.denuncia),
+                    RequestToDenuncia(denuncia.denuncia),
                     serializableToComercioDenunciado(denuncia.comercioDenunciado)
                 )
                 call.response.status(HttpStatusCode.Created)
@@ -127,7 +124,7 @@ fun Route.denunciaRouting(jwtService: JWTService, denunciaService: DenunciaServi
                             "\n--------------------"
                 )
                 if (result != null) {
-                    call.respond(denunciaToSerializable(result))
+                    call.respond(denunciaToResponse(result))
                 }
             } else {
                 call.response.status(HttpStatusCode.Unauthorized)
@@ -157,15 +154,18 @@ fun Route.denunciaRouting(jwtService: JWTService, denunciaService: DenunciaServi
     }
 
     post("$ruta/nueva-denuncia-vecino") {
+        //TODO IMPLEMENTAR BUSQUEDA DE USUARIO A QUIEN SE HA DENUNCIADO
         val result: Denuncia?
         try {
             val request = call.receive<AutenticacionDenunciaVecino>()
             val autenticacion = request.autenticacion
-            val denuncia = request.denunciaVecino
+            val denuncia = request.denuncia
+            val vecinoDenunciado = requestToVecinoDenunciado(denuncia.vecinoDenunciado)
+            vecinoDenunciado.documento = vecinoService.getVecinoSegunNomApDir(vecinoDenunciado.nombre, vecinoDenunciado.apellido, vecinoDenunciado.direccion)?.documento
             if (jwtService.validateToken(autenticacion.token)) {
                 result = denunciaService.addDenunciaVecino(
-                    serializableToDenuncia(denuncia.denuncia),
-                    serializableToVecinoDenunciado(denuncia.vecinoDenunciado)
+                    RequestToDenuncia(denuncia.denuncia),
+                    vecinoDenunciado
                 )
                 call.response.status(HttpStatusCode.Created)
                 println(
@@ -174,7 +174,7 @@ fun Route.denunciaRouting(jwtService: JWTService, denunciaService: DenunciaServi
                             "\n--------------------"
                 )
                 if (result != null) {
-                    call.respond(denunciaToSerializable(result))
+                    call.respond(denunciaToResponse(result))
                 }
             } else {
                 call.response.status(HttpStatusCode.Unauthorized)
@@ -344,20 +344,19 @@ fun Route.denunciaRouting(jwtService: JWTService, denunciaService: DenunciaServi
     //TODO IMPLEMENTAR MOVIMIENTOS DENUNCIAS
 }
 
-fun serializableToVecinoDenunciado(vecinoDenunciado: VecinoDenunciadoSerializable): VecinoDenunciado {
+fun requestToVecinoDenunciado(vecinoDenunciado: VecinoDenunciadoRequest): VecinoDenunciado {
     return VecinoDenunciado(
-        0,
-        vecinoDenunciado.idDenuncia,
-        vecinoDenunciado.documento,
+        null,
+        null,
         vecinoDenunciado.direccion,
         vecinoDenunciado.nombre,
         vecinoDenunciado.apellido
     )
 }
 
-private fun denunciaToSerializable(d: Denuncia): DenunciaSerializable {
-    return DenunciaSerializable(
-        d.idDenuncia,
+private fun denunciaToResponse(d: Denuncia): DenunciaResponse {
+    return DenunciaResponse(
+        d.idDenuncia!!,
         d.descripcion,
         d.estado,
         d.aceptarResponsabilidad,
@@ -365,20 +364,20 @@ private fun denunciaToSerializable(d: Denuncia): DenunciaSerializable {
 
 }
 
-private fun serializableToDenuncia(d:DenunciaSerializable): Denuncia{
+private fun RequestToDenuncia(d: DenunciaRequest): Denuncia{
     return Denuncia(
-        d.idDenuncia,
+        null,
         d.descripcion,
-        d.estado,
+        null,
         d.aceptarResponsabilidad,
         d.documento
     )
 }
 
-fun serializableToComercioDenunciado(comercioDenunciado: ComercioDenunciadoSerializable): ComercioDenunciado {
-    return ComercioDenunciado(0,
+fun serializableToComercioDenunciado(comercioDenunciado: ComercioDenunciadoRequest): ComercioDenunciado {
+    return ComercioDenunciado(
         comercioDenunciado.idComercio,
-        comercioDenunciado.idDenuncia,
+        null,
         comercioDenunciado.nombre,
         comercioDenunciado.direccion
     )

@@ -1,5 +1,6 @@
 package ar.edu.uade.models
 
+import ar.edu.uade.models.Desperfecto.Desperfectos.idDesperfecto
 import ar.edu.uade.utilities.BigDecimalComponentSerializer
 import ar.edu.uade.utilities.LocalTimeComponentSerializer
 import org.jetbrains.exposed.sql.Table
@@ -35,5 +36,6 @@ data class Comercio(
         val latitud = decimal("latitud",9,5).nullable()
         val longitud = decimal("longitud",9,5).nullable()
         val documento = varchar("documento",20).nullable()
+        override val primaryKey = PrimaryKey(idComercio)
     }
 }

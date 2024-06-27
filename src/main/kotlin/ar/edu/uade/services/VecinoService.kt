@@ -12,4 +12,8 @@ class VecinoService(config: ApplicationConfig) {
         return vecinoDAO.findVecino(documento)
     }
 
+    suspend fun getVecinoSegunNomApDir(nombre: String,apellido: String, direccion: String):Vecino?{
+        return vecinoDAO.getVecinoSegunNomApDir(nombre,apellido,direccion)
+    }
+
 }

@@ -166,7 +166,6 @@ fun Route.reclamoRouting(jwtService: JWTService, reclamoService: ReclamoService,
 
 
         val multipart = call.receiveMultipart()
-
         val uploadDir = File("D:\\Prueba")
         if (uploadDir.mkdir()) {
 

@@ -4,7 +4,7 @@ import org.jetbrains.exposed.sql.Table
 import java.io.Serializable
 
 data class Denuncia (
-    val idDenuncia: Int,
+    val idDenuncia: Int?,
     val descripcion: String?,
     val estado: String?,
     val aceptarResponsabilidad: Boolean,

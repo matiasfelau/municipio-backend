@@ -55,18 +55,18 @@ class DenunciaDAOFacadeMySQLImpl : DenunciaDAOFacade{
 
     }
 
-    override suspend fun addComercioDenunciado(denuncia: Denuncia, comercioDenunciado: ComercioDenunciado){
+    override suspend fun addComercioDenunciado(id: Int, comercioDenunciado: ComercioDenunciado){
         val insertStatement = ComerciosDenunciados.insert {
             it[ComerciosDenunciados.idComercio] = comercioDenunciado.idComercio
-            it[ComerciosDenunciados.idDenuncia] = denuncia.idDenuncia
+            it[ComerciosDenunciados.idDenuncia] = id
             it[ComerciosDenunciados.nombre] = comercioDenunciado.nombre
             it[ComerciosDenunciados.direccion] = comercioDenunciado.direccion
         }
     }
 
-    override suspend fun addVecinoDenunciado(denuncia: Denuncia, vecinoDenunciado: VecinoDenunciado) {
+    override suspend fun addVecinoDenunciado(id: Int, vecinoDenunciado: VecinoDenunciado) {
         val insertStatement = VecinosDenunciados.insert {
-            it[VecinosDenunciados.idDenuncia] = denuncia.idDenuncia
+            it[VecinosDenunciados.idDenuncia] = id
             it[VecinosDenunciados.documento] =  vecinoDenunciado.documento
             it[VecinosDenunciados.nombre] = vecinoDenunciado.nombre
             it[VecinosDenunciados.direccion] = vecinoDenunciado.direccion

@@ -10,8 +10,8 @@ interface DenunciaDAOFacade {
     suspend fun getDenunciaById(id: Int): Denuncia?
     //TODO Ver...
     suspend fun addDenuncia(denuncia: Denuncia): Denuncia?
-    suspend fun addComercioDenunciado(denuncia: Denuncia, comercioDenunciado: ComercioDenunciado)
-    suspend fun addVecinoDenunciado(denuncia: Denuncia, vecinoDenunciado: VecinoDenunciado)
+    suspend fun addComercioDenunciado(idDenuncia: Int, comercioDenunciado: ComercioDenunciado)
+    suspend fun addVecinoDenunciado(idDenuncia: Int, vecinoDenunciado: VecinoDenunciado)
     suspend fun addImagenToDenuncia(idDenuncia: Int, urlImagen: String)
     suspend fun getAllCantidadPaginas(): Int
     suspend fun getFotosById(id: Int): List<DenunciaImagen>

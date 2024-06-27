@@ -1,12 +1,10 @@
-package ar.edu.uade.mappers.serializables
+package ar.edu.uade.mappers.requests
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ComercioDenunciadoSerializable(
-    val id: Int,
+data class ComercioDenunciadoRequest(
     val idComercio: Int,
-    val idDenuncia: Int,
     val nombre: String,
     val direccion: String
 )

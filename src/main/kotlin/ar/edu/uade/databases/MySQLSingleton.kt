@@ -32,6 +32,7 @@ object MySQLSingleton {
             SchemaUtils.create(DenunciaImagen.DenunciaImagenes)
             SchemaUtils.create(VecinoDenunciado.VecinosDenunciados)
             SchemaUtils.create(ComercioDenunciado.ComerciosDenunciados)
+            SchemaUtils.create(Comercio.Comercios)
             //TODO IMPLEMENTAR MOVIMIENTO DENUNCIAS
         }
     }
