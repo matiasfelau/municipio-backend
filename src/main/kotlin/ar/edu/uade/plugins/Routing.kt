@@ -8,6 +8,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Application.configureRouting(
+    denunciaService: DenunciaService,
     credencialService: CredencialService,
     credencialJWTService: CredencialJWTService,
     empleadoService: EmpleadoService,
@@ -34,5 +35,6 @@ fun Application.configureRouting(
         rubroRouting(jwtService,rubroService)
         sitioRouting(jwtService,sitioService)
         documentoTokenRouting(documentoTokenService)
+        denunciaRouting(jwtService,denunciaService,cloudinaryConfig)
     }
 }

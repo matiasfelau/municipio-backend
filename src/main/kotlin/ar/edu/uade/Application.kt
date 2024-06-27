@@ -32,8 +32,10 @@ fun Application.module() {
     val movimientoReclamoService = MovimientoReclamoService()
     val cloudinary = CloudinaryConfig(this)
     val documentoToken = DocumentoTokenService()
+    val denunciaService = DenunciaService(environment.config)
     configureSecurity(credencialJWTService, empleadoJWTService)
     configureRouting(
+        denunciaService,
         credencialService,
         credencialJWTService,
         empleadoService,

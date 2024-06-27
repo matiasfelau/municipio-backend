@@ -109,7 +109,7 @@ fun Route.denunciaRouting(jwtService: JWTService, denunciaService: DenunciaServi
         }
     }
 
-    post("$ruta/nuevoComercio") {
+    post("$ruta/nueva-denuncia-comercio") {
         val result: Denuncia?
         try {
             val request = call.receive<AutenticacionDenunciaComercio>()
@@ -156,7 +156,7 @@ fun Route.denunciaRouting(jwtService: JWTService, denunciaService: DenunciaServi
         }
     }
 
-    post("$ruta/nuevoVecino") {
+    post("$ruta/nueva-denuncia-vecino") {
         val result: Denuncia?
         try {
             val request = call.receive<AutenticacionDenunciaVecino>()
