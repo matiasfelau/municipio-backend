@@ -9,6 +9,7 @@ import io.ktor.server.routing.*
 
 fun Application.configureRouting(
     denunciaService: DenunciaService,
+    comercioService: ComercioService,
     credencialService: CredencialService,
     credencialJWTService: CredencialJWTService,
     empleadoService: EmpleadoService,
@@ -38,5 +39,6 @@ fun Application.configureRouting(
         documentoTokenRouting(documentoTokenService)
         denunciaRouting(jwtService,denunciaService,vecinoService,cloudinaryConfig)
         profesionalRouting(profesionalService, jwtService)
+        comercioRouting(jwtService,comercioService,cloudinaryConfig)
     }
 }

@@ -20,6 +20,7 @@ fun Application.module() {
     configureSerialization()
     MySQLSingleton.init(environment.config)
     val credencialService = CredencialService(environment.config)
+    val comercioService = ComercioService()
     val credencialJWTService = CredencialJWTService(this, credencialService)
     val empleadoService = EmpleadoService(environment.config)
     val empleadoJWTService = EmpleadoJWTService(this, empleadoService)
@@ -37,6 +38,7 @@ fun Application.module() {
     configureSecurity(credencialJWTService, empleadoJWTService)
     configureRouting(
         denunciaService,
+        comercioService,
         credencialService,
         credencialJWTService,
         empleadoService,
