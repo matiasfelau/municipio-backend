@@ -1,12 +1,9 @@
 package ar.edu.uade.daos
 
 import ar.edu.uade.databases.MySQLSingleton.dbQuery
+import ar.edu.uade.models.*
 import ar.edu.uade.models.ComercioDenunciado.*
-import ar.edu.uade.models.ComercioDenunciado
-import ar.edu.uade.models.Denuncia
 import ar.edu.uade.models.Denuncia.Denuncias
-import ar.edu.uade.models.DenunciaImagen
-import ar.edu.uade.models.VecinoDenunciado
 import ar.edu.uade.models.VecinoDenunciado.*
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
@@ -64,11 +61,12 @@ class DenunciaDAOFacadeMySQLImpl : DenunciaDAOFacade{
         }
     }
 
-    override suspend fun addVecinoDenunciado(id: Int, vecinoDenunciado: VecinoDenunciado) {
+    override suspend fun addVecinoDenunciado(id: Int, vecinoDenunciado: VecinoDenunciado) = dbQuery {
         val insertStatement = VecinosDenunciados.insert {
             it[VecinosDenunciados.idDenuncia] = id
             it[VecinosDenunciados.documento] =  vecinoDenunciado.documento
             it[VecinosDenunciados.nombre] = vecinoDenunciado.nombre
+            it[VecinosDenunciados.apellido] = vecinoDenunciado.apellido
             it[VecinosDenunciados.direccion] = vecinoDenunciado.direccion
         }
     }

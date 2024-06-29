@@ -114,7 +114,7 @@ fun Route.denunciaRouting(jwtService: JWTService, denunciaService: DenunciaServi
             val denuncia = request.denuncia
             if (jwtService.validateToken(autenticacion.token)) {
                 result = denunciaService.addDenunciaComercio(
-                    RequestToDenuncia(denuncia.denuncia),
+                    requestToDenuncia(denuncia.denuncia),
                     serializableToComercioDenunciado(denuncia.comercioDenunciado)
                 )
                 call.response.status(HttpStatusCode.Created)
@@ -164,7 +164,7 @@ fun Route.denunciaRouting(jwtService: JWTService, denunciaService: DenunciaServi
             vecinoDenunciado.documento = vecinoService.getVecinoSegunNomApDir(vecinoDenunciado.nombre, vecinoDenunciado.apellido, vecinoDenunciado.direccion)?.documento
             if (jwtService.validateToken(autenticacion.token)) {
                 result = denunciaService.addDenunciaVecino(
-                    RequestToDenuncia(denuncia.denuncia),
+                    requestToDenuncia(denuncia.denuncia),
                     vecinoDenunciado
                 )
                 call.response.status(HttpStatusCode.Created)
@@ -364,7 +364,7 @@ private fun denunciaToResponse(d: Denuncia): DenunciaResponse {
 
 }
 
-private fun RequestToDenuncia(d: DenunciaRequest): Denuncia{
+private fun requestToDenuncia(d: DenunciaRequest): Denuncia{
     return Denuncia(
         null,
         d.descripcion,
