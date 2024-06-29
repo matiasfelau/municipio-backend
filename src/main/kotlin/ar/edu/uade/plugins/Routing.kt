@@ -21,7 +21,8 @@ fun Application.configureRouting(
     rubroService: RubroService,
     cloudinaryConfig: CloudinaryConfig,
     documentoTokenService: DocumentoTokenService,
-    movimientoReclamoService: MovimientoReclamoService
+    movimientoReclamoService: MovimientoReclamoService,
+    profesionalService: ProfesionalService
     ) {
     routing {
         get("/") {
@@ -36,5 +37,6 @@ fun Application.configureRouting(
         sitioRouting(jwtService,sitioService)
         documentoTokenRouting(documentoTokenService)
         denunciaRouting(jwtService,denunciaService,vecinoService,cloudinaryConfig)
+        profesionalRouting(profesionalService, jwtService)
     }
 }

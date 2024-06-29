@@ -33,6 +33,7 @@ fun Application.module() {
     val cloudinary = CloudinaryConfig(this)
     val documentoToken = DocumentoTokenService()
     val denunciaService = DenunciaService(environment.config)
+    val profesionalService = ProfesionalService()
     configureSecurity(credencialJWTService, empleadoJWTService)
     configureRouting(
         denunciaService,
@@ -48,7 +49,8 @@ fun Application.module() {
         rubroService,
         cloudinary,
         documentoToken,
-        movimientoReclamoService)
+        movimientoReclamoService,
+        profesionalService)
     val serviceAccount = FileInputStream("src/main/resources/firebase/serviceAccountKey.json")
     val options = FirebaseOptions.builder()
         .setCredentials(GoogleCredentials.fromStream(serviceAccount))

@@ -9,6 +9,7 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
+import ar.edu.uade.models.Profesional.Profesionales
 
 object MySQLSingleton {
     fun init(config: ApplicationConfig) {
@@ -33,7 +34,7 @@ object MySQLSingleton {
             SchemaUtils.create(VecinoDenunciado.VecinosDenunciados)
             SchemaUtils.create(ComercioDenunciado.ComerciosDenunciados)
             SchemaUtils.create(Comercio.Comercios)
-            //TODO IMPLEMENTAR MOVIMIENTO DENUNCIAS
+            SchemaUtils.create(Profesionales)
         }
     }
 
