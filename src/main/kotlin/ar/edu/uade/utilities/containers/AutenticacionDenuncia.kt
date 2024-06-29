@@ -4,7 +4,7 @@ import ar.edu.uade.utilities.Autenticacion
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class AutenticacionDenunciaComercio(
+data class AutenticacionDenuncia (
     val autenticacion: Autenticacion,
-    val containerDenunciaComercio: ContainerDenunciaComercio
+    val documento: String
 )

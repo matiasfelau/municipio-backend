@@ -13,12 +13,24 @@ import kotlin.math.ceil
 class DenunciaService(config: ApplicationConfig) {
     private val dao: DenunciaDAOFacade = DenunciaDAOFacadeMySQLImpl()
 
-    suspend fun getDenuncias(pagina: Int): List<Denuncia> {
-        return dao.get10Denuncias(pagina)
+    suspend fun getDenuncias(pagina: Int,documento: String): List<Denuncia> {
+        return dao.get10Denuncias(pagina, documento)
     }
 
     suspend fun getDenunciaById(id: Int): Denuncia? {
         return  dao.getDenunciaById(id)
+    }
+
+    suspend fun getDenunciado(id: Int): String? {
+        val vecinodenunciado = dao.getVecinoDenunciado(id)
+        val comerciodenunciado = dao.getComercioDenunciado(id)
+        var resultado = ""
+        if (vecinodenunciado != null) {
+            resultado = "VECINO DENUNCIADO: "+vecinodenunciado.nombre +" "+ vecinodenunciado.apellido
+        }else if(comerciodenunciado != null) {
+            resultado = "COMERCIO DENUNCIADO: "+comerciodenunciado.nombre
+        }else resultado = ""
+        return resultado
     }
 
     suspend fun addDenunciaComercio(denuncia: Denuncia,comercioDenunciado: ComercioDenunciado): Denuncia? {

@@ -4,11 +4,11 @@ import ar.edu.uade.databases.MySQLSingleton.dbQuery
 import ar.edu.uade.models.*
 import ar.edu.uade.models.ComercioDenunciado.*
 import ar.edu.uade.models.Denuncia.Denuncias
+import ar.edu.uade.models.Desperfecto.Desperfectos
+import ar.edu.uade.models.Reclamo.Reclamos
 import ar.edu.uade.models.VecinoDenunciado.*
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class DenunciaDAOFacadeMySQLImpl : DenunciaDAOFacade{
 
@@ -20,15 +20,32 @@ class DenunciaDAOFacadeMySQLImpl : DenunciaDAOFacade{
         documento = row[Denuncias.documento]
     )
 
+    private fun resultRowToVecinoDenunciado(row: ResultRow) = VecinoDenunciado(
+        idDenuncia = row[VecinosDenunciados.idDenuncia],
+        nombre = row[VecinosDenunciados.nombre],
+        apellido = row[VecinosDenunciados.apellido],
+        direccion = row[VecinosDenunciados.direccion],
+        documento = row[VecinosDenunciados.documento]
+    )
+
+    private fun resultRowToComercioDenunciado(row: ResultRow) = ComercioDenunciado(
+        idDenuncia = row[ComerciosDenunciados.idDenuncia],
+        idComercio = row[ComerciosDenunciados.idComercio],
+        nombre = row[ComerciosDenunciados.nombre],
+        direccion = row[ComerciosDenunciados.direccion]
+    )
+
     private fun resultRowToDenunciaImagen(row: ResultRow) = DenunciaImagen(
         idDenuncia = row[DenunciaImagen.DenunciaImagenes.idDenuncia],
         urlImagen = row[DenunciaImagen.DenunciaImagenes.urlImagen]
     )
 
-    override suspend fun get10Denuncias(pagina: Int): List<Denuncia> = dbQuery {
+    override suspend fun get10Denuncias(pagina: Int, documento: String): List<Denuncia> = dbQuery {
         val offset = (pagina - 1) * 10
-        println("todos")
-        Denuncias.selectAll()
+        Denuncias.join(VecinosDenunciados, JoinType.FULL, additionalConstraint = { Denuncias.idDenuncia eq VecinosDenunciados.idDenuncia })
+            .join(ComerciosDenunciados, JoinType.FULL, additionalConstraint = {Denuncias.idDenuncia eq ComerciosDenunciados.idDenuncia})
+            .join(Comercio.Comercios, JoinType.FULL, additionalConstraint = {ComerciosDenunciados.idComercio eq Comercio.Comercios.idComercio})
+            .select { Denuncias.documento like documento or(VecinosDenunciados.documento like documento) or(ComerciosDenunciados.idComercio eq Comercio.Comercios.idComercio)}
             .limit(10,offset.toLong())
             .map(::resultRowToDenuncia)
     }
@@ -38,6 +55,18 @@ class DenunciaDAOFacadeMySQLImpl : DenunciaDAOFacade{
         Denuncias.select { Denuncias.idDenuncia eq id }
             .map(::resultRowToDenuncia)
             .singleOrNull()
+    }
+
+    override suspend fun getVecinoDenunciado(id: Int): VecinoDenunciado? = dbQuery{
+        VecinosDenunciados.select {
+            VecinosDenunciados.idDenuncia eq id
+        }.map(::resultRowToVecinoDenunciado).singleOrNull()
+    }
+
+    override suspend fun getComercioDenunciado(id: Int): ComercioDenunciado? = dbQuery{
+        ComerciosDenunciados.select {
+            ComerciosDenunciados.idDenuncia eq id
+        }.map(::resultRowToComercioDenunciado).singleOrNull()
     }
 
     override suspend fun addDenuncia(denuncia: Denuncia): Denuncia? = dbQuery {

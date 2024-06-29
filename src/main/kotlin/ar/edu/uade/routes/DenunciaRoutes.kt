@@ -4,6 +4,7 @@ import ar.edu.uade.mappers.requests.ComercioDenunciadoRequest
 import ar.edu.uade.mappers.requests.DenunciaRequest
 import ar.edu.uade.mappers.requests.VecinoDenunciadoRequest
 import ar.edu.uade.mappers.responses.DenunciaResponse
+import ar.edu.uade.mappers.responses.DenunciadoResponse
 import ar.edu.uade.models.ComercioDenunciado
 import ar.edu.uade.models.Denuncia
 import ar.edu.uade.models.VecinoDenunciado
@@ -12,6 +13,7 @@ import ar.edu.uade.services.JWTService
 import ar.edu.uade.services.VecinoService
 import ar.edu.uade.utilities.Autenticacion
 import ar.edu.uade.utilities.CloudinaryConfig
+import ar.edu.uade.utilities.containers.AutenticacionDenuncia
 import ar.edu.uade.utilities.containers.AutenticacionDenunciaComercio
 import ar.edu.uade.utilities.containers.AutenticacionDenunciaVecino
 import com.cloudinary.utils.ObjectUtils
@@ -28,12 +30,16 @@ fun Route.denunciaRouting(jwtService: JWTService, denunciaService: DenunciaServi
     val ruta = "/denuncia"
 
     put("$ruta/todos/{pagina}") {
+        //TODO EDITAR PARA QUE SOLO PUEDAS VER TUS DENUNCIAS Y A LAS CUALES TE FUERON DENUNCIADAS
+
         val resultado: MutableList<DenunciaResponse> = ArrayList<DenunciaResponse>()
         try {
             val pagina = call.parameters["pagina"]!!.toInt()
-            val auth = call.receive<Autenticacion>()
+            val body = call.receive<AutenticacionDenuncia>()
+            val auth = body.autenticacion
+            val documento = body.documento
             if (jwtService.validateToken(auth.token)) {
-                val denuncias = denunciaService.getDenuncias(pagina)
+                val denuncias = denunciaService.getDenuncias(pagina,documento)
                 for (d in denuncias) {
                     resultado.add(denunciaToResponse(d))
                 }
@@ -106,15 +112,46 @@ fun Route.denunciaRouting(jwtService: JWTService, denunciaService: DenunciaServi
         }
     }
 
+    get("$ruta/denunciado/{id}"){
+        var resultado: DenunciadoResponse = DenunciadoResponse(null)
+        try{
+            val id = call.parameters["id"]!!.toInt()
+            val denunciado = denunciaService.getDenunciado(id);
+            if (denunciado != null && denunciado != "") {
+                val denunciadoResponse = DenunciadoResponse(
+                    denunciado
+                )
+                resultado = denunciadoResponse
+                call.response.status(HttpStatusCode.OK)
+                println("DENUNCIADO ENTREGADO \n"
+                + denunciado)
+            } else {
+                call.response.status(HttpStatusCode.NotFound)
+                println("DENUNCIADO NO ENCONTRADO")
+            }
+        } catch (nullPointerException: NullPointerException) {
+        call.response.status(HttpStatusCode.BadRequest)
+            println("DENUNCIADO BAD REQUEST")
+        } catch (numberFormatException: NumberFormatException) {
+        call.response.status(HttpStatusCode.BadRequest)
+            println("DENUNCIADO BAD REQUEST")
+        } catch (exception: Exception) {
+        call.response.status(HttpStatusCode.InternalServerError)
+            println("DENUNCIADO INTERNAL SERVER ERROR")
+        }
+        call.respond(resultado)
+    }
+
     post("$ruta/nueva-denuncia-comercio") {
         val result: Denuncia?
         try {
             val request = call.receive<AutenticacionDenunciaComercio>()
             val autenticacion = request.autenticacion
-            val denuncia = request.denuncia
+            val denuncia = request.containerDenunciaComercio
             if (jwtService.validateToken(autenticacion.token)) {
                 result = denunciaService.addDenunciaComercio(
                     requestToDenuncia(denuncia.denuncia),
+                    //TODO USAR COMERCIOSERVICE
                     serializableToComercioDenunciado(denuncia.comercioDenunciado)
                 )
                 call.response.status(HttpStatusCode.Created)
