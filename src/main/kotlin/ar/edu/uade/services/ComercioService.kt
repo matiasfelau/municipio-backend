@@ -4,6 +4,7 @@ import ar.edu.uade.daos.ComercioDAOFacade
 import ar.edu.uade.daos.ComercioDAOFacadeMySQLImpl
 import ar.edu.uade.models.Comercio
 import ar.edu.uade.models.Denuncia
+import ar.edu.uade.models.Profesional
 import io.ktor.server.config.*
 import kotlin.math.ceil
 
@@ -16,6 +17,10 @@ class ComercioService() {
 
     suspend fun getComercioById(id: Int): Comercio? {
         return  dao.getComercioByID(id)
+    }
+
+    suspend fun get10Comercios(pagina: Int): List<Comercio> {
+        return dao.get10Comercio(pagina)
     }
 
     suspend fun getCantidadPaginas(): Int {

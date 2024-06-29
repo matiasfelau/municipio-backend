@@ -32,31 +32,33 @@ fun Route.comercioRouting(jwtService: JWTService, comercioService: ComercioServi
             val pagina = call.parameters["pagina"]!!.toInt()
             val auth = call.receive<Autenticacion>()
             if (jwtService.validateToken(auth.token)) {
-                val comercios = comercioService.getComercios(pagina)
-                for (d in comercios) {
-                    resultado.add(comercioToResponse(d))
+                if (auth.tipo == "VECINO") {
+                    val comercios: List<Comercio> = comercioService.get10Comercios(pagina)
+                            for (d in comercios) {
+                                resultado.add(comercioToResponse(d))
+                    }
+                    call.response.status(HttpStatusCode.OK)
+                    println(
+                        "\n--------------------" +
+                                "\nSTATUS:COMERCIO OK" +
+                                "\n--------------------" +
+                                "\nUSUARIO:${auth.tipo}" +
+                                "\nPAGINA:${pagina}" +
+                                "\n--------------------" +
+                                "\nRESULTADO:${resultado}" +
+                                "\n--------------------"
+                    )
+                } else {
+                    call.response.status(HttpStatusCode.Unauthorized)
+                    println(
+                        "\n--------------------" +
+                                "\nSTATUS:COMERCIO UNAUTHORIZED" +
+                                "\n--------------------" +
+                                "\nUSUARIO:${auth.tipo}" +
+                                "\nPAGINA:${pagina}" +
+                                "\n--------------------"
+                    )
                 }
-                call.response.status(HttpStatusCode.OK)
-                println(
-                    "\n--------------------" +
-                            "\nSTATUS:COMERCIO OK" +
-                            "\n--------------------" +
-                            "\nUSUARIO:${auth.tipo}" +
-                            "\nPAGINA:${pagina}" +
-                            "\n--------------------" +
-                            "\nRESULTADO:${resultado}" +
-                            "\n--------------------"
-                )
-            } else {
-                call.response.status(HttpStatusCode.Unauthorized)
-                println(
-                    "\n--------------------" +
-                            "\nSTATUS:COMERCIO UNAUTHORIZED" +
-                            "\n--------------------" +
-                            "\nUSUARIO:${auth.tipo}" +
-                            "\nPAGINA:${pagina}" +
-                            "\n--------------------"
-                )
             }
         } catch (exposedSQLException: ExposedSQLException) {
             call.response.status(HttpStatusCode.BadRequest)
