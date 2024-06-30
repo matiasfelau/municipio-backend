@@ -12,5 +12,6 @@ interface ComercioDAOFacade {
     suspend fun addComercio(nombre:String, documento: String?, direccion: String?, descripcion:String?, telefono: Int?, apertura: LocalTime?, cierre: LocalTime?, latitud: BigDecimal?, longitud: BigDecimal?): Comercio?
     suspend fun addImagenToComercio(urlImagen: String,idComercio: Int): ComercioImagen?
     suspend fun getFotosById(id: Int): List<ComercioImagen>
+    suspend fun getComercioByNomYDir(nombre: String, direccion: String): Comercio?
 
 }

@@ -14,7 +14,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.ceil
 
-class ComercioService() {
+class ComercioService(config: ApplicationConfig) {
     private val dao: ComercioDAOFacade = ComercioDAOFacadeMySQLImpl()
 
     suspend fun getComercios(pagina: Int): List<Comercio>{
@@ -69,5 +69,14 @@ class ComercioService() {
             resultado.add(foto.urlImagen)
         }
         return resultado
+    }
+
+    suspend fun getComercioByNomYDir(nombre: String, direccion: String): Int {
+        val result = dao.getComercioByNomYDir(nombre, direccion)
+        if (result != null){
+            return result.idComercio
+        }
+        return Int.MAX_VALUE
+
     }
 }

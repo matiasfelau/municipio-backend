@@ -8,6 +8,7 @@ import ar.edu.uade.mappers.responses.DenunciadoResponse
 import ar.edu.uade.models.ComercioDenunciado
 import ar.edu.uade.models.Denuncia
 import ar.edu.uade.models.VecinoDenunciado
+import ar.edu.uade.services.ComercioService
 import ar.edu.uade.services.DenunciaService
 import ar.edu.uade.services.JWTService
 import ar.edu.uade.services.VecinoService
@@ -26,7 +27,7 @@ import io.ktor.server.routing.*
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import java.io.File
 
-fun Route.denunciaRouting(jwtService: JWTService, denunciaService: DenunciaService, vecinoService: VecinoService, /* movimientoDenunciaService: MovimientoDenunciaService ,*/ cloudinaryConfig: CloudinaryConfig) {
+fun Route.denunciaRouting(jwtService: JWTService, denunciaService: DenunciaService, vecinoService: VecinoService, comercioService: ComercioService, /* movimientoDenunciaService: MovimientoDenunciaService ,*/ cloudinaryConfig: CloudinaryConfig) {
     val ruta = "/denuncia"
 
     put("$ruta/todos/{pagina}") {
@@ -148,20 +149,29 @@ fun Route.denunciaRouting(jwtService: JWTService, denunciaService: DenunciaServi
             val request = call.receive<AutenticacionDenunciaComercio>()
             val autenticacion = request.autenticacion
             val denuncia = request.containerDenunciaComercio
+            print("Nombre comercio : ${denuncia.comercioDenunciado.nombre}")
+            denuncia.denuncia.estado = "Nuevo"
+            print("direccion comercio : ${denuncia.comercioDenunciado.direccion}")
+            val idcomercioDenunciado = comercioService.getComercioByNomYDir(denuncia.comercioDenunciado.nombre, denuncia.comercioDenunciado.direccion)
+            val comercioDenunciadoEncontrado = serializableToComercioDenunciado(denuncia.comercioDenunciado, idcomercioDenunciado)
+            println("COMERCIO DENUNCIADO ES ID: $idcomercioDenunciado")
             if (jwtService.validateToken(autenticacion.token)) {
-                result = denunciaService.addDenunciaComercio(
-                    requestToDenuncia(denuncia.denuncia),
-                    //TODO USAR COMERCIOSERVICE
-                    serializableToComercioDenunciado(denuncia.comercioDenunciado)
-                )
-                call.response.status(HttpStatusCode.Created)
-                println(
-                    "\n--------------------" +
-                            "\nSTATUS:DENUNCIA CREATED" +
-                            "\n--------------------"
-                )
-                if (result != null) {
-                    call.respond(denunciaToResponse(result))
+                if(idcomercioDenunciado != Int.MAX_VALUE){
+                    result = denunciaService.addDenunciaComercio(
+                        requestToDenuncia(denuncia.denuncia),
+                        comercioDenunciadoEncontrado
+                    )
+                    call.response.status(HttpStatusCode.Created)
+                    println(
+                        "\n--------------------" +
+                                "\nSTATUS:DENUNCIA CREATED" +
+                                "\n--------------------"
+                    )
+                    if (result != null) {
+                        call.respond(denunciaToResponse(result))
+                    }
+                }  else{
+                    call.response.status(HttpStatusCode.NotFound)
                 }
             } else {
                 call.response.status(HttpStatusCode.Unauthorized)
@@ -191,13 +201,15 @@ fun Route.denunciaRouting(jwtService: JWTService, denunciaService: DenunciaServi
     }
 
     post("$ruta/nueva-denuncia-vecino") {
-        //TODO IMPLEMENTAR BUSQUEDA DE USUARIO A QUIEN SE HA DENUNCIADO
+
         val result: Denuncia?
         try {
             val request = call.receive<AutenticacionDenunciaVecino>()
             val autenticacion = request.autenticacion
             val denuncia = request.denuncia
+            denuncia.denuncia.estado = "Nuevo"
             val vecinoDenunciado = requestToVecinoDenunciado(denuncia.vecinoDenunciado)
+            //implementacion de busqueda de denunciado
             vecinoDenunciado.documento = vecinoService.getVecinoSegunNomApDir(vecinoDenunciado.nombre, vecinoDenunciado.apellido, vecinoDenunciado.direccion)?.documento
             if (jwtService.validateToken(autenticacion.token)) {
                 result = denunciaService.addDenunciaVecino(
@@ -411,9 +423,9 @@ private fun requestToDenuncia(d: DenunciaRequest): Denuncia{
     )
 }
 
-fun serializableToComercioDenunciado(comercioDenunciado: ComercioDenunciadoRequest): ComercioDenunciado {
+fun serializableToComercioDenunciado(comercioDenunciado: ComercioDenunciadoRequest, id: Int): ComercioDenunciado {
     return ComercioDenunciado(
-        comercioDenunciado.idComercio,
+        id,
         null,
         comercioDenunciado.nombre,
         comercioDenunciado.direccion

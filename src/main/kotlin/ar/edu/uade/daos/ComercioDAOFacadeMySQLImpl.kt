@@ -5,10 +5,7 @@ import ar.edu.uade.models.Comercio
 import ar.edu.uade.models.Comercio.Comercios
 import ar.edu.uade.models.ComercioImagen
 import ar.edu.uade.models.ComercioImagen.Comerciomagenes
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
 import java.math.BigDecimal
 import java.time.LocalTime
 
@@ -89,5 +86,10 @@ class ComercioDAOFacadeMySQLImpl: ComercioDAOFacade {
     override suspend fun getFotosById(id: Int): List<ComercioImagen> = dbQuery {
         ComercioImagen.Comerciomagenes.select{ ComercioImagen.Comerciomagenes.idComercio eq id }
             .map(::resultRowToComercioImagen)
+    }
+
+    override suspend fun getComercioByNomYDir(nombre: String, direccion: String): Comercio? = dbQuery{
+        Comercio.Comercios.select{ Comercio.Comercios.nombre like nombre and(Comercio.Comercios.direccion like direccion)}
+            .map(::resultRowToComercio).singleOrNull()
     }
 }

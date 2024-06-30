@@ -81,7 +81,7 @@ class DenunciaDAOFacadeMySQLImpl : DenunciaDAOFacade{
 
     }
 
-    override suspend fun addComercioDenunciado(id: Int, comercioDenunciado: ComercioDenunciado){
+    override suspend fun addComercioDenunciado(id: Int, comercioDenunciado: ComercioDenunciado) = dbQuery{
         val insertStatement = ComerciosDenunciados.insert {
             it[ComerciosDenunciados.idComercio] = comercioDenunciado.idComercio
             it[ComerciosDenunciados.idDenuncia] = id
