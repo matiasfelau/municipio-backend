@@ -20,5 +20,5 @@ class ComercioResponse (
     @Serializable(with = BigDecimalComponentSerializer::class)
     val latitud: BigDecimal?,
     @Serializable(with = BigDecimalComponentSerializer::class)
-    val longitud: BigDecimal?
+    val longitud: BigDecimal?,
 )

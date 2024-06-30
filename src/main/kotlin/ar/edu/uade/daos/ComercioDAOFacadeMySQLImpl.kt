@@ -5,7 +5,9 @@ import ar.edu.uade.models.Comercio
 import ar.edu.uade.models.Comercio.Comercios
 import ar.edu.uade.models.ComercioImagen
 import ar.edu.uade.models.ComercioImagen.Comerciomagenes
+import ar.edu.uade.models.Profesional
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import java.math.BigDecimal
 import java.time.LocalTime
 
@@ -21,7 +23,8 @@ class ComercioDAOFacadeMySQLImpl: ComercioDAOFacade {
         apertura = row[Comercios.apertura],
         cierre = row[Comercios.cierre],
         latitud = row[Comercios.latitud],
-        longitud = row[Comercios.longitud]
+        longitud = row[Comercios.longitud],
+        autorizado = row[Comercios.autorizado]
     )
 
     private fun resultRowToComercioImagen(row: ResultRow) = ComercioImagen(
@@ -30,22 +33,20 @@ class ComercioDAOFacadeMySQLImpl: ComercioDAOFacade {
         idComercio = row[Comerciomagenes.idComercio]
     )
     override suspend fun getallCantidadPaginas(): Int = dbQuery {
-        Comercio.Comercios.selectAll()
+        Comercios.select { Comercios.autorizado eq true }
             .map(::resultRowToComercio)
             .count()
     }
 
     override suspend fun getComercioByID(id: Int): Comercio? = dbQuery {
-        println("id")
-        Comercio.Comercios.select{ Comercio.Comercios.idComercio eq id}
+        Comercios.select{ Comercios.idComercio eq id}
             .map(::resultRowToComercio)
             .singleOrNull()
     }
 
     override suspend fun get10Comercio(pagina: Int): List<Comercio> = dbQuery {
         val offset = (pagina -1)*10
-        println("todos")
-        Comercio.Comercios.selectAll()
+        Comercios.select { Comercios.autorizado eq true }
             .limit(10, offset.toLong())
             .map(::resultRowToComercio)
     }
@@ -84,12 +85,18 @@ class ComercioDAOFacadeMySQLImpl: ComercioDAOFacade {
     }
 
     override suspend fun getFotosById(id: Int): List<ComercioImagen> = dbQuery {
-        ComercioImagen.Comerciomagenes.select{ ComercioImagen.Comerciomagenes.idComercio eq id }
+        Comerciomagenes.select{ Comerciomagenes.idComercio eq id }
             .map(::resultRowToComercioImagen)
     }
 
     override suspend fun getComercioByNomYDir(nombre: String, direccion: String): Comercio? = dbQuery{
-        Comercio.Comercios.select{ Comercio.Comercios.nombre like nombre and(Comercio.Comercios.direccion like direccion)}
+        Comercios.select{ Comercios.nombre like nombre and(Comercios.direccion like direccion)}
             .map(::resultRowToComercio).singleOrNull()
+    }
+
+    override suspend fun habilitarComercio(idComercio: Int): Boolean = dbQuery {
+        Comercios.update({ Comercios.idComercio eq idComercio }) {
+            it[Comercios.autorizado] = true
+        } > 0
     }
 }

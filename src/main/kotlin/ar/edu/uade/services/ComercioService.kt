@@ -79,4 +79,7 @@ class ComercioService(config: ApplicationConfig) {
         return Int.MAX_VALUE
 
     }
+    suspend fun habilitarComercio(idComercio: Int): Boolean {
+        return dao.habilitarComercio(idComercio)
+    }
 }

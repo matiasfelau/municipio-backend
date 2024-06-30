@@ -23,7 +23,8 @@ data class Comercio(
     @kotlinx.serialization.Serializable(with = BigDecimalComponentSerializer::class)
     val latitud: BigDecimal?,
     @kotlinx.serialization.Serializable(with = BigDecimalComponentSerializer::class)
-    val longitud: BigDecimal?
+    val longitud: BigDecimal?,
+    val autorizado: Boolean
 ): Serializable{
     public object Comercios: Table(){
         val idComercio = integer("idComercio").autoIncrement()
@@ -36,6 +37,7 @@ data class Comercio(
         val cierre = time("cierre").nullable()
         val latitud = decimal("latitud",9,5).nullable()
         val longitud = decimal("longitud",9,5).nullable()
+        val autorizado = bool("autorizado").default(false)
         override val primaryKey = PrimaryKey(idComercio)
     }
 }

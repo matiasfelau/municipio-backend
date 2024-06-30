@@ -299,7 +299,62 @@ fun Route.comercioRouting(jwtService: JWTService, comercioService: ComercioServi
             exception.printStackTrace()
         }
     }
+
+    get(ruta+"/habilitar"+"/{idComercio}") {
+        try {
+            val idComercio = call.parameters["idComercio"]!!.toInt()
+            if (idComercio != null) {
+                if (comercioService.habilitarComercio(idComercio)) {
+                    call.response.status(HttpStatusCode.OK)
+                    println(
+                        "\n--------------------" +
+                                "\nACTOR:HABILITACION COMERCIO" +
+                                "\nSTATUS:OK" +
+                                "\n--------------------" +
+                                "\nDATOS:" +
+                                "\n--------------------"
+                    )
+                }
+                else {
+                    call.response.status(HttpStatusCode.BadRequest)
+                    println(
+                        "\n--------------------" +
+                                "\nACTOR:HABILITACION_COMERCIO" +
+                                "\nSTATUS:BAD_REQUEST" +
+                                "\n--------------------" +
+                                "\nDATOS:" +
+                                "\n--------------------"
+                    )
+                }
+            }
+            else {
+                call.response.status(HttpStatusCode.BadRequest)
+                println(
+                    "\n--------------------" +
+                            "\nACTOR:HABILITACION_COMERCIO" +
+                            "\nSTATUS:BAD_REQUEST" +
+                            "\n--------------------" +
+                            "\nDATOS:" +
+                            "\n--------------------"
+                )
+            }
+        }
+        catch (exception: Exception) {
+            call.response.status(HttpStatusCode.InternalServerError)
+            println(
+                "\n--------------------" +
+                        "\nACTOR:HABILITACION_COMERCIO" +
+                        "\nSTATUS:INTERNAL_SERVER_ERROR" +
+                        "\n--------------------" +
+                        "\nERROR:${exception.message}" +
+                        "\n--------------------"
+            )
+        }
+        call.respond(true)
+    }
 }
+
+
 
 private fun comercioToResponse(d: Comercio): ComercioResponse{
     return ComercioResponse(
