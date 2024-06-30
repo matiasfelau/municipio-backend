@@ -9,6 +9,7 @@ import ar.edu.uade.utilities.CloudinaryConfig
 import com.cloudinary.utils.ObjectUtils
 import java.io.File
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.ceil
 
 class ProfesionalService {
@@ -18,8 +19,29 @@ class ProfesionalService {
         return ceil(dao.getCantidadElementos().toDouble() / 10).toInt()
     }
 
-    suspend fun get10Profesionales(pagina: Int): List<Profesional> {
-        return dao.get10Profesionales(pagina)
+    suspend fun get10Profesionales(pagina: Int): MutableList<MapProfesional> {
+        val profesionales = dao.get10Profesionales(pagina)
+        val mapsProfesionales: MutableList<MapProfesional> = ArrayList<MapProfesional>();
+        for (profesional in profesionales) {
+            val mapsImagenes: MutableList<String> = ArrayList<String>();
+            val imagenes = dao.getFotos(profesional.idProfesional)
+            for (imagen in imagenes) {
+                mapsImagenes.add(imagen.urlImagen)
+            }
+            mapsProfesionales.add(MapProfesional(
+                profesional.nombre,
+                profesional.direccion,
+                profesional.telefono,
+                profesional.email,
+                profesional.latitud,
+                profesional.longitud,
+                profesional.inicioJornada,
+                profesional.finJornada,
+                profesional.documento,
+                mapsImagenes
+            ))
+        }
+        return mapsProfesionales
     }
 
     suspend fun addProfesional(mapProfesional: MapProfesional, cloudinaryConfig: CloudinaryConfig): Profesional? {
@@ -48,5 +70,9 @@ class ProfesionalService {
             }
         }
         return profesional
+    }
+
+    suspend fun habilitarProfesional(idProfesional: Int): Boolean {
+        return dao.habilitarProfesional(idProfesional)
     }
 }

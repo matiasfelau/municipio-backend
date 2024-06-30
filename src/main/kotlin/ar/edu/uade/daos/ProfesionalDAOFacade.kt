@@ -10,4 +10,6 @@ interface ProfesionalDAOFacade {
     suspend fun get10Profesionales(pagina: Int): List<Profesional>
     suspend fun addProfesional(nombre: String, direccion: String?, telefono: Int?, email: String?, latitud: BigDecimal?, longitud: BigDecimal?, inicioJornada: LocalTime?, finJornada: LocalTime?, documento: String): Profesional?
     suspend fun addImagenToProfesional(urlImagen: String, idProfesional: Int): ImagenProfesional?
+    suspend fun getFotos(idProfesional: Int): List<ImagenProfesional>
+    suspend fun habilitarProfesional(idProfesional: Int): Boolean
 }

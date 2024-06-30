@@ -1,13 +1,13 @@
 package ar.edu.uade.daos
 
 import ar.edu.uade.databases.MySQLSingleton.dbQuery
+import ar.edu.uade.models.Credencial.Credenciales
 import ar.edu.uade.models.Profesional
-import org.jetbrains.exposed.sql.ResultRow
 import ar.edu.uade.models.Profesional.Profesionales
 import ar.edu.uade.models.ImagenProfesional
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.selectAll
 import ar.edu.uade.models.ImagenProfesional.ImagenesProfesional
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import java.math.BigDecimal
 import java.time.LocalTime
 
@@ -22,7 +22,8 @@ class ProfesionalDAOFacadeMySQLImpl: ProfesionalDAOFacade {
         longitud = row[Profesionales.longitud],
         inicioJornada = row[Profesionales.inicioJornada],
         finJornada = row[Profesionales.finJornada],
-        documento = row[Profesionales.documento]
+        documento = row[Profesionales.documento],
+        autorizado = row[Profesionales.autorizado]
     )
 
     private fun resultRowToImagenProfesional(row: ResultRow) = ImagenProfesional(
@@ -32,14 +33,14 @@ class ProfesionalDAOFacadeMySQLImpl: ProfesionalDAOFacade {
     )
 
     override suspend fun getCantidadElementos(): Int = dbQuery {
-        Profesionales.selectAll()
+        Profesionales.select { Profesionales.autorizado eq true }
             .map(::resultRowToProfesional)
             .count()
     }
 
     override suspend fun get10Profesionales(pagina: Int): List<Profesional> = dbQuery {
         val offset = (pagina - 1) * 10
-        Profesionales.selectAll()
+        Profesionales.select { Profesionales.autorizado eq true }
             .limit(10, offset.toLong())
             .map(::resultRowToProfesional)
     }
@@ -73,5 +74,15 @@ class ProfesionalDAOFacadeMySQLImpl: ProfesionalDAOFacade {
             it[ImagenesProfesional.idProfesional] = idProfesional
         }
         insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToImagenProfesional)
+    }
+
+    override suspend fun getFotos(idProfesional: Int): List<ImagenProfesional> = dbQuery {
+        ImagenesProfesional.select { ImagenesProfesional.idProfesional eq idProfesional }.map(::resultRowToImagenProfesional)
+    }
+
+    override suspend fun habilitarProfesional(idProfesional: Int): Boolean = dbQuery {
+        Profesionales.update({ Profesionales.idProfesional eq idProfesional }) {
+            it[Profesionales.autorizado] = true
+        } > 0
     }
 }

@@ -16,7 +16,8 @@ data class Profesional(
     val longitud: BigDecimal?,
     val inicioJornada: LocalTime?,
     val finJornada: LocalTime?,
-    val documento: String
+    val documento: String,
+    val autorizado: Boolean
 ): Serializable {
     public object Profesionales: Table() {
         val idProfesional = integer("idProfesional").autoIncrement()
@@ -29,6 +30,7 @@ data class Profesional(
         val inicioJornada = time("inicioJornada").nullable()
         val finJornada = time("finJornada").nullable()
         val documento = varchar("documento", 20)
+        val autorizado = bool("autorizado").default(false)
         override val primaryKey = PrimaryKey(idProfesional)
     }
 }
