@@ -39,6 +39,7 @@ object MySQLSingleton {
             SchemaUtils.create(Profesionales)
             SchemaUtils.create(ImagenesProfesional)
             SchemaUtils.create(Comerciomagenes)
+            SchemaUtils.create(MovimientoDenuncia.MovimientosDenuncia)
         }
     }
 

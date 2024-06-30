@@ -5,13 +5,10 @@ import ar.edu.uade.mappers.requests.DenunciaRequest
 import ar.edu.uade.mappers.requests.VecinoDenunciadoRequest
 import ar.edu.uade.mappers.responses.DenunciaResponse
 import ar.edu.uade.mappers.responses.DenunciadoResponse
-import ar.edu.uade.models.ComercioDenunciado
-import ar.edu.uade.models.Denuncia
-import ar.edu.uade.models.VecinoDenunciado
-import ar.edu.uade.services.ComercioService
-import ar.edu.uade.services.DenunciaService
-import ar.edu.uade.services.JWTService
-import ar.edu.uade.services.VecinoService
+import ar.edu.uade.mappers.responses.MovimientoDenunciaResponse
+import ar.edu.uade.mappers.responses.MovimientoReclamoResponse
+import ar.edu.uade.models.*
+import ar.edu.uade.services.*
 import ar.edu.uade.utilities.Autenticacion
 import ar.edu.uade.utilities.CloudinaryConfig
 import ar.edu.uade.utilities.containers.AutenticacionDenuncia
@@ -27,7 +24,7 @@ import io.ktor.server.routing.*
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import java.io.File
 
-fun Route.denunciaRouting(jwtService: JWTService, denunciaService: DenunciaService, vecinoService: VecinoService, comercioService: ComercioService, /* movimientoDenunciaService: MovimientoDenunciaService ,*/ cloudinaryConfig: CloudinaryConfig) {
+fun Route.denunciaRouting(jwtService: JWTService, denunciaService: DenunciaService, vecinoService: VecinoService, comercioService: ComercioService, movimientoDenunciaService: MovimientoDenunciaService, cloudinaryConfig: CloudinaryConfig) {
     val ruta = "/denuncia"
 
     put("$ruta/todos/{pagina}") {
@@ -224,7 +221,7 @@ fun Route.denunciaRouting(jwtService: JWTService, denunciaService: DenunciaServi
                     requestToDenuncia(denunciaContainer.denuncia),
                     vecinoDenunciado
                 )
-                var files = denunciaContainer.denuncia.fileStrings!!
+                val files = denunciaContainer.denuncia.fileStrings!!
                 for(file in files){
                     if (result != null) {
                         result.idDenuncia?.let { it1 -> denunciaService.addFileToDenuncia(it1,file,cloudinaryConfig) }
@@ -405,7 +402,67 @@ fun Route.denunciaRouting(jwtService: JWTService, denunciaService: DenunciaServi
         call.respond(resultado)
     }
 
-    //TODO IMPLEMENTAR MOVIMIENTOS DENUNCIAS
+    get("$ruta/movimientos/{idDenuncia}") {
+        try{
+            val movimientosReclamo = call.parameters["IdDenuncia"]?.toIntOrNull()
+                ?.let { it1 -> movimientoDenunciaService.getMovimientosDenuncia(it1) }
+            var resultado: MutableList<MovimientoDenunciaResponse> = ArrayList<MovimientoDenunciaResponse>()
+            if (movimientosReclamo != null) {
+                for (m in movimientosReclamo){
+                    resultado.add(movimientoToResponse(m))
+
+                }
+                call.response.status(HttpStatusCode.OK)
+                println("BRODE UHH")
+                println(resultado)
+                call.respond(resultado)
+            }
+            else {
+                call.response.status(HttpStatusCode.BadRequest)
+                println("BRODE UHH 2")
+            }
+
+        }catch (nullexcedException: NullPointerException){
+            call.response.status(HttpStatusCode.BadRequest)
+            println("\n--------------------" +
+                    "\nACTOR:MOVIMIENTOS RECLAMO" +
+                    "\nSTATUS:BAD_REQUEST" +
+                    "\n--------------------" +
+                    "\n${nullexcedException.message}" +
+                    "\n--------------------"
+
+            )
+        }catch (ex: ExposedSQLException){
+            call.response.status(HttpStatusCode.BadRequest)
+            println("\n--------------------" +
+                    "\nACTOR:MOVIMIENTOS RECLAMO" +
+                    "\nSTATUS:BAD_REQUEST" +
+                    "\n--------------------" +
+                    "\n${ex.message}" +
+                    "\n--------------------"
+
+            )
+        }catch(numberFormatException: NumberFormatException){
+            call.response.status(HttpStatusCode.BadRequest)
+            println("\n--------------------" +
+                    "\nACTOR:MOVIMIENTOS RECLAMO" +
+                    "\nSTATUS:BAD_REQUEST" +
+                    "\n--------------------" +
+                    "\n${numberFormatException.message}" +
+                    "\n--------------------"
+
+            )
+        }catch (ex: Exception){
+            call.response.status(HttpStatusCode.InternalServerError)
+            println("\n--------------------" +
+                    "\nACTOR:MOVIMIENTOS RECLAMO" +
+                    "\nSTATUS:INTERNAL_SERVER_ERROR" +
+                    "\n--------------------" +
+                    "\n${ex.message}" +
+                    "\n--------------------"
+            )
+        }
+    }
 }
 
 fun requestToVecinoDenunciado(vecinoDenunciado: VecinoDenunciadoRequest): VecinoDenunciado {
@@ -444,6 +501,16 @@ fun serializableToComercioDenunciado(comercioDenunciado: ComercioDenunciadoReque
         null,
         comercioDenunciado.nombre,
         comercioDenunciado.direccion
+    )
+}
+
+private fun movimientoToResponse(movimientoDenuncia: MovimientoDenuncia): MovimientoDenunciaResponse {
+    return MovimientoDenunciaResponse(
+        movimientoDenuncia.idMovimiento,
+        movimientoDenuncia.responsable,
+        movimientoDenuncia.causa,
+        movimientoDenuncia.fecha,
+        movimientoDenuncia.idDenuncia
     )
 }
 
