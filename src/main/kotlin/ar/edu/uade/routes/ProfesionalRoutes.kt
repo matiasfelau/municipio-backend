@@ -1,12 +1,12 @@
 package ar.edu.uade.routes
 
 import ar.edu.uade.mappers.responses.ProfesionalResponse
-import ar.edu.uade.mappers.responses.ReclamoResponse
 import ar.edu.uade.models.Profesional
 import ar.edu.uade.services.JWTService
 import ar.edu.uade.services.ProfesionalService
 import ar.edu.uade.utilities.Autenticacion
-import ar.edu.uade.utilities.containers.AutenticacionFiltro
+import ar.edu.uade.utilities.CloudinaryConfig
+import ar.edu.uade.utilities.containers.AutenticacionProfesional
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -14,7 +14,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 
-fun Route.profesionalRouting(profesionalService: ProfesionalService, jwtService: JWTService) {
+fun Route.profesionalRouting(profesionalService: ProfesionalService, jwtService: JWTService, cloudinaryConfig: CloudinaryConfig) {
 
     val API_ROUTE: String = "/profesionales"
 
@@ -175,12 +175,57 @@ fun Route.profesionalRouting(profesionalService: ProfesionalService, jwtService:
         }
         call.respond(resultado)
     }
+
+    post("$API_ROUTE/nuevo") {
+        val result: Profesional?
+        try {
+            val body = call.receive<AutenticacionProfesional>()
+            val autenticacion = body.autenticacion
+            val mapProfesional = body.profesional
+            if (jwtService.validateToken(autenticacion.token)) {
+                result = profesionalService.addProfesional(
+                    mapProfesional,
+                    cloudinaryConfig
+                )
+                call.response.status(HttpStatusCode.Created)
+                println("\n--------------------" +
+                        "\nSTATUS:OK" +
+                        "\n--------------------"
+                )
+                if (result != null) {
+                    call.respond(profesionalToResponse(result))
+                }
+            } else {
+                call.response.status(HttpStatusCode.Unauthorized)
+                println("\n--------------------" +
+                        "\nSTATUS:Unauthorized" +
+                        "\n--------------------"
+                )
+            }
+        } catch (exposedSQLException: ExposedSQLException) {
+            call.response.status(HttpStatusCode.BadRequest)
+            println("\n--------------------" +
+                    "\nSTATUS:BadRequest" +
+                    "\n--------------------"
+            )
+            exposedSQLException.printStackTrace()
+        } catch (exception: Exception) {
+            call.response.status(HttpStatusCode.InternalServerError)
+            println("\n--------------------" +
+                    "\nSTATUS:InternalServerError" +
+                    "\n--------------------"
+            )
+            exception.printStackTrace()
+        }
+    }
+
 }
 
 private fun requestToProfesional() {}
 
 private fun profesionalToResponse(profesional: Profesional): ProfesionalResponse {
     return ProfesionalResponse(
+        profesional.idProfesional,
         profesional.nombre,
         profesional.direccion,
         profesional.telefono,

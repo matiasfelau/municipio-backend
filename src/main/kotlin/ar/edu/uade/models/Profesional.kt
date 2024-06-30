@@ -7,7 +7,7 @@ import java.math.BigDecimal
 import java.time.LocalTime
 
 data class Profesional(
-    val idProfesional: Int?,
+    val idProfesional: Int,
     val nombre: String,
     val direccion: String?,
     val telefono: Int?,

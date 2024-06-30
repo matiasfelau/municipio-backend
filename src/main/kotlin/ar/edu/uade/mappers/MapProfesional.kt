@@ -1,14 +1,15 @@
-package ar.edu.uade.mappers.responses
+package ar.edu.uade.mappers
 
 import ar.edu.uade.utilities.BigDecimalComponentSerializer
 import ar.edu.uade.utilities.LocalTimeComponentSerializer
+import ar.edu.uade.utilities.UriComponentSerializer
 import kotlinx.serialization.Serializable
 import java.math.BigDecimal
+import java.net.URI
 import java.time.LocalTime
 
 @Serializable
-class ProfesionalResponse(
-    val idProfesional: Int?,
+data class MapProfesional(
     val nombre: String,
     val direccion: String?,
     val telefono: Int?,
@@ -21,5 +22,6 @@ class ProfesionalResponse(
     val inicioJornada: LocalTime?,
     @Serializable(with = LocalTimeComponentSerializer::class)
     val finJornada: LocalTime?,
-    val documento: String
+    val documento: String,
+    val images: List<String>
 ) {}

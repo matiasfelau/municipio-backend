@@ -160,8 +160,6 @@ fun Route.reclamoRouting(jwtService: JWTService, reclamoService: ReclamoService,
 
     post("$ruta/subirImagenes/{idReclamo}") {
 
-        println("entra")
-
         val idReclamo = call.parameters["idReclamo"]?.toIntOrNull()
 
 

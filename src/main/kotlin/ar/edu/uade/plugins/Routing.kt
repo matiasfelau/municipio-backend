@@ -38,7 +38,7 @@ fun Application.configureRouting(
         sitioRouting(jwtService,sitioService)
         documentoTokenRouting(documentoTokenService)
         denunciaRouting(jwtService,denunciaService,vecinoService,cloudinaryConfig)
-        profesionalRouting(profesionalService, jwtService)
+        profesionalRouting(profesionalService, jwtService, cloudinaryConfig)
         comercioRouting(jwtService,comercioService,cloudinaryConfig)
     }
 }
