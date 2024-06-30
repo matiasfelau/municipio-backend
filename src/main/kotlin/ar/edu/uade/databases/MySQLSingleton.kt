@@ -11,6 +11,7 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import org.jetbrains.exposed.sql.transactions.transaction
 import ar.edu.uade.models.Profesional.Profesionales
 import ar.edu.uade.models.ImagenProfesional.ImagenesProfesional
+import ar.edu.uade.models.ComercioImagen.Comerciomagenes
 
 object MySQLSingleton {
     fun init(config: ApplicationConfig) {
@@ -37,6 +38,7 @@ object MySQLSingleton {
             SchemaUtils.create(Comercio.Comercios)
             SchemaUtils.create(Profesionales)
             SchemaUtils.create(ImagenesProfesional)
+            SchemaUtils.create(Comerciomagenes)
         }
     }
 

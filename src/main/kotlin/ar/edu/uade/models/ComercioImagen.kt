@@ -1,16 +1,18 @@
 package ar.edu.uade.models
 
-import ar.edu.uade.models.DenunciaImagen.DenunciaImagenes.references
 import org.jetbrains.exposed.sql.Table
 import java.io.Serializable
+import ar.edu.uade.models.Comercio.Comercios
 
-class ComercioImagen (
+data class ComercioImagen (
+    val idImagen: Int,
     val urlImagen: String,
     val idComercio: Int
-    ): Serializable {
+): Serializable {
         object Comerciomagenes: Table(){
+            val idImagen = integer("idImagen").autoIncrement()
             val urlImagen = varchar("urlImagen",255)
-            val idComercio = integer("idComercio").references(Comercio.Comercios.idComercio)
+            val idComercio = integer("idComercio").references(Comercios.idComercio)
             override val primaryKey = PrimaryKey(urlImagen)
         }
     }
