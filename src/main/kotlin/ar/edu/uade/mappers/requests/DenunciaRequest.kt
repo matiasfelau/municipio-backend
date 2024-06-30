@@ -7,5 +7,6 @@ data class DenunciaRequest (
     val descripcion: String?,
     var estado: String?,
     val aceptarResponsabilidad: Boolean,
-    val documento: String
+    val documento: String,
+    val fileStrings: List<String>?
 )

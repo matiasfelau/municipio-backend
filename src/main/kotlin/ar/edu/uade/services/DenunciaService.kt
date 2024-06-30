@@ -5,9 +5,11 @@ import ar.edu.uade.daos.DenunciaDAOFacadeMySQLImpl
 import ar.edu.uade.models.ComercioDenunciado
 import ar.edu.uade.models.Denuncia
 import ar.edu.uade.models.VecinoDenunciado
-import ar.edu.uade.utilities.containers.ContainerDenunciaComercio
+import ar.edu.uade.utilities.CloudinaryConfig
+import com.cloudinary.utils.ObjectUtils
 import io.ktor.server.config.*
-import org.jetbrains.exposed.sql.transactions.transaction
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.ceil
 
 class DenunciaService(config: ApplicationConfig) {
@@ -49,8 +51,12 @@ class DenunciaService(config: ApplicationConfig) {
         return denunciaDevuelta
     }
 
-    suspend fun addImagenToDenuncia(idDenuncia: Int, urlImagen: String) {
-        dao.addImagenToDenuncia(idDenuncia, urlImagen)
+    suspend fun addFileToDenuncia(idDenuncia: Int, urlImagen: String, cloudinaryConfig: CloudinaryConfig) {
+        val imageBytes = Base64.getDecoder().decode(urlImagen)
+        val uploadResult = cloudinaryConfig.cloudinary.uploader().upload(imageBytes, ObjectUtils.emptyMap())
+        val urlFile = uploadResult["url"] as String
+        println("URL: $urlFile")
+        dao.addImagenToDenuncia(idDenuncia, urlFile)
     }
 
     suspend fun getCantidadPaginas(): Int{

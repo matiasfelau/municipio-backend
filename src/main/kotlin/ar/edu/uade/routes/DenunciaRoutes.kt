@@ -148,19 +148,27 @@ fun Route.denunciaRouting(jwtService: JWTService, denunciaService: DenunciaServi
         try {
             val request = call.receive<AutenticacionDenunciaComercio>()
             val autenticacion = request.autenticacion
-            val denuncia = request.containerDenunciaComercio
-            print("Nombre comercio : ${denuncia.comercioDenunciado.nombre}")
-            denuncia.denuncia.estado = "Nuevo"
-            print("direccion comercio : ${denuncia.comercioDenunciado.direccion}")
-            val idcomercioDenunciado = comercioService.getComercioByNomYDir(denuncia.comercioDenunciado.nombre, denuncia.comercioDenunciado.direccion)
-            val comercioDenunciadoEncontrado = serializableToComercioDenunciado(denuncia.comercioDenunciado, idcomercioDenunciado)
+            val denunciaContainer = request.containerDenunciaComercio
+            print("Nombre comercio : ${denunciaContainer.comercioDenunciado.nombre}")
+            denunciaContainer.denuncia.estado = "Nuevo"
+            print("direccion comercio : ${denunciaContainer.comercioDenunciado.direccion}")
+            val idcomercioDenunciado = comercioService.getComercioByNomYDir(denunciaContainer.comercioDenunciado.nombre, denunciaContainer.comercioDenunciado.direccion)
+            val comercioDenunciadoEncontrado = serializableToComercioDenunciado(denunciaContainer.comercioDenunciado, idcomercioDenunciado)
             println("COMERCIO DENUNCIADO ES ID: $idcomercioDenunciado")
             if (jwtService.validateToken(autenticacion.token)) {
                 if(idcomercioDenunciado != Int.MAX_VALUE){
                     result = denunciaService.addDenunciaComercio(
-                        requestToDenuncia(denuncia.denuncia),
+                        requestToDenuncia(denunciaContainer.denuncia),
                         comercioDenunciadoEncontrado
                     )
+
+                    var files = denunciaContainer.denuncia.fileStrings!!
+                    for(imagen in files){
+                        if (result != null) {
+                            result.idDenuncia?.let { it1 -> denunciaService.addFileToDenuncia(it1,imagen,cloudinaryConfig) }
+                        }
+                    }
+
                     call.response.status(HttpStatusCode.Created)
                     println(
                         "\n--------------------" +
@@ -206,16 +214,23 @@ fun Route.denunciaRouting(jwtService: JWTService, denunciaService: DenunciaServi
         try {
             val request = call.receive<AutenticacionDenunciaVecino>()
             val autenticacion = request.autenticacion
-            val denuncia = request.denuncia
-            denuncia.denuncia.estado = "Nuevo"
-            val vecinoDenunciado = requestToVecinoDenunciado(denuncia.vecinoDenunciado)
+            val denunciaContainer = request.denuncia
+            denunciaContainer.denuncia.estado = "Nuevo"
+            val vecinoDenunciado = requestToVecinoDenunciado(denunciaContainer.vecinoDenunciado)
             //implementacion de busqueda de denunciado
             vecinoDenunciado.documento = vecinoService.getVecinoSegunNomApDir(vecinoDenunciado.nombre, vecinoDenunciado.apellido, vecinoDenunciado.direccion)?.documento
             if (jwtService.validateToken(autenticacion.token)) {
                 result = denunciaService.addDenunciaVecino(
-                    requestToDenuncia(denuncia.denuncia),
+                    requestToDenuncia(denunciaContainer.denuncia),
                     vecinoDenunciado
                 )
+                var files = denunciaContainer.denuncia.fileStrings!!
+                for(file in files){
+                    if (result != null) {
+                        result.idDenuncia?.let { it1 -> denunciaService.addFileToDenuncia(it1,file,cloudinaryConfig) }
+                    }
+                }
+
                 call.response.status(HttpStatusCode.Created)
                 println(
                     "\n--------------------" +
@@ -252,7 +267,7 @@ fun Route.denunciaRouting(jwtService: JWTService, denunciaService: DenunciaServi
         }
     }
 
-    post("$ruta/subirImagenes/{idDenuncia}") {
+    /*post("$ruta/subirImagenes/{idDenuncia}") {
         val idDenuncia = call.parameters["idDenuncia"]?.toIntOrNull()
         val multipart = call.receiveMultipart()
         val uploadDir = File("D:\\Prueba")
@@ -281,14 +296,14 @@ fun Route.denunciaRouting(jwtService: JWTService, denunciaService: DenunciaServi
                 urlImagen = uploadResult["url"] as String
                 if (urlImagen != null) {
                     if (idDenuncia != null) {
-                        denunciaService.addImagenToDenuncia(idDenuncia, urlImagen!!)
+                        denunciaService.addFileToDenuncia(idDenuncia, urlImagen!!)
                     }
                 }
                 file.delete()
             }
             part.dispose()
         }
-    }
+    }*/
 
     put("$ruta/cantidadPaginas") {
         try {
