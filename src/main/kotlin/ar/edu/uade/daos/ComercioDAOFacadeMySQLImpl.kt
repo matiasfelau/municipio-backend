@@ -2,30 +2,32 @@ package ar.edu.uade.daos
 
 import ar.edu.uade.databases.MySQLSingleton.dbQuery
 import ar.edu.uade.models.Comercio
+import ar.edu.uade.models.Comercio.Comercios
 import ar.edu.uade.models.ComercioImagen
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
+import ar.edu.uade.models.ComercioImagen.Comerciomagenes
+import org.jetbrains.exposed.sql.*
+import java.math.BigDecimal
+import java.time.LocalTime
 
 class ComercioDAOFacadeMySQLImpl: ComercioDAOFacade {
 
     private fun resultRowToComercio(row: ResultRow) = Comercio(
-        idComercio = row[Comercio.Comercios.idComercio],
-        nombre = row[Comercio.Comercios.nombre],
-        apertura = row[Comercio.Comercios.apertura],
-        cierre = row[Comercio.Comercios.cierre],
-        direccion = row[Comercio.Comercios.direccion],
-        telefono = row[Comercio.Comercios.telefono],
-        descripcion = row[Comercio.Comercios.descripcion],
-        latitud = row[Comercio.Comercios.latitud],
-        longitud = row[Comercio.Comercios.longitud],
-        documento = row[Comercio.Comercios.documento]
+        idComercio = row[Comercios.idComercio],
+        nombre = row[Comercios.nombre],
+        documento = row[Comercios.documento],
+        direccion = row[Comercios.direccion],
+        descripcion = row[Comercios.descripcion],
+        telefono = row[Comercios.telefono],
+        apertura = row[Comercios.apertura],
+        cierre = row[Comercios.cierre],
+        latitud = row[Comercios.latitud],
+        longitud = row[Comercios.longitud]
     )
 
     private fun resultRowToComercioImagen(row: ResultRow) = ComercioImagen(
-        idComercio = row[ComercioImagen.Comerciomagenes.idComercio],
-        urlImagen = row[ComercioImagen.Comerciomagenes.urlImagen]
+        idImagen = row[Comerciomagenes.idImagen],
+        urlImagen = row[Comerciomagenes.urlImagen],
+        idComercio = row[Comerciomagenes.idComercio]
     )
     override suspend fun getallCantidadPaginas(): Int = dbQuery {
         Comercio.Comercios.selectAll()
@@ -48,31 +50,46 @@ class ComercioDAOFacadeMySQLImpl: ComercioDAOFacade {
             .map(::resultRowToComercio)
     }
 
-    override suspend fun addComercio(comercio: Comercio): Comercio? = dbQuery{
-        val insertStatement = Comercio.Comercios.insert {
-            it[Comercio.Comercios.idComercio] = comercio.idComercio
-            it[Comercio.Comercios.nombre] = comercio.nombre
-            it[Comercio.Comercios.apertura] = comercio.apertura
-            it[Comercio.Comercios.cierre] = comercio.cierre
-            it[Comercio.Comercios.direccion] = comercio.direccion
-            it[Comercio.Comercios.telefono] = comercio.telefono
-            it[Comercio.Comercios.descripcion] = comercio.descripcion
-            it[Comercio.Comercios.latitud] = comercio.latitud
-            it[Comercio.Comercios.longitud] = comercio.longitud
-            it[Comercio.Comercios.documento] = comercio.documento
+    override suspend fun addComercio(nombre:String,
+                                     documento: String?,
+                                     direccion: String?,
+                                     descripcion:String?,
+                                     telefono: Int?,
+                                     apertura: LocalTime?,
+                                     cierre: LocalTime?,
+                                     latitud: BigDecimal?,
+                                     longitud: BigDecimal?): Comercio? = dbQuery{
+
+
+        val insertStatement = Comercios.insert {
+            it[Comercios.nombre] = nombre
+            it[Comercios.documento] = documento
+            it[Comercios.direccion] = direccion
+            it[Comercios.descripcion] = descripcion
+            it[Comercios.telefono] = telefono
+            it[Comercios.apertura] = apertura
+            it[Comercios.cierre] = cierre
+            it[Comercios.latitud] = latitud
+            it[Comercios.longitud] = longitud
         }
         insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToComercio)
     }
 
-    override suspend fun addImagenToComercio(idComercio: Int, urlImagen: String) = dbQuery {
-        val insertStatement = ComercioImagen.Comerciomagenes.insert {
-            it[ComercioImagen.Comerciomagenes.idComercio] = idComercio
-            it[ComercioImagen.Comerciomagenes.urlImagen] = urlImagen
+    override suspend fun addImagenToComercio(urlImagen: String, idComercio: Int): ComercioImagen? = dbQuery {
+        val insertStatement = Comerciomagenes.insert {
+            it[Comerciomagenes.urlImagen] = urlImagen
+            it[Comerciomagenes.idComercio] = idComercio
         }
+        insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToComercioImagen)
     }
 
     override suspend fun getFotosById(id: Int): List<ComercioImagen> = dbQuery {
         ComercioImagen.Comerciomagenes.select{ ComercioImagen.Comerciomagenes.idComercio eq id }
             .map(::resultRowToComercioImagen)
+    }
+
+    override suspend fun getComercioByNomYDir(nombre: String, direccion: String): Comercio? = dbQuery{
+        Comercio.Comercios.select{ Comercio.Comercios.nombre like nombre and(Comercio.Comercios.direccion like direccion)}
+            .map(::resultRowToComercio).singleOrNull()
     }
 }
