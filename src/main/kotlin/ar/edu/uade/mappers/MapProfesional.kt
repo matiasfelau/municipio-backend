@@ -11,6 +11,8 @@ import java.time.LocalTime
 @Serializable
 data class MapProfesional(
     val nombre: String,
+    val rubro: String,
+    val descripcion: String?,
     val direccion: String?,
     val telefono: Int?,
     val email: String?,

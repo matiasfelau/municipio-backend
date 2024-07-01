@@ -16,9 +16,13 @@ import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeMessage
 import kotlin.random.Random
 
-class CredencialService(config: ApplicationConfig) {
+class CredencialService() {
     private val credencialDAO : CredencialDAOFacade = CredencialDAOFacadeMySQLImpl()
     private val vecinoDAO : VecinoDAOFacade = VecinoDAOFacadeMySQLImpl()
+
+    public fun getDAO(): CredencialDAOFacade {
+        return credencialDAO
+    }
 
     suspend fun solicitarCredencial(documento: String, email: String) : Credencial? {
         if (vecinoDAO.verifyVecino(documento)) {

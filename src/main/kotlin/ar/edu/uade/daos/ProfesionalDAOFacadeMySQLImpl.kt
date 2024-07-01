@@ -15,6 +15,8 @@ class ProfesionalDAOFacadeMySQLImpl: ProfesionalDAOFacade {
     private fun resultRowToProfesional(row: ResultRow) = Profesional(
         idProfesional = row[Profesionales.idProfesional],
         nombre = row[Profesionales.nombre],
+        rubro = row[Profesionales.rubro],
+        descripcion = row[Profesionales.descripcion],
         direccion = row[Profesionales.direccion],
         telefono = row[Profesionales.telefono],
         email = row[Profesionales.email],
@@ -46,6 +48,8 @@ class ProfesionalDAOFacadeMySQLImpl: ProfesionalDAOFacade {
     }
 
     override suspend fun addProfesional(nombre: String,
+                                        rubro: String,
+                                        descripcion: String?,
                                         direccion: String?,
                                         telefono: Int?,
                                         email: String?,
@@ -56,6 +60,8 @@ class ProfesionalDAOFacadeMySQLImpl: ProfesionalDAOFacade {
                                         documento: String): Profesional? = dbQuery {
         val insertStatement = Profesionales.insert {
             it[Profesionales.nombre] = nombre
+            it[Profesionales.rubro] = rubro
+            it[Profesionales.descripcion] = descripcion
             it[Profesionales.direccion] = direccion
             it[Profesionales.telefono] = telefono
             it[Profesionales.email] = email
@@ -84,5 +90,9 @@ class ProfesionalDAOFacadeMySQLImpl: ProfesionalDAOFacade {
         Profesionales.update({ Profesionales.idProfesional eq idProfesional }) {
             it[Profesionales.autorizado] = true
         } > 0
+    }
+
+    override suspend fun getProfesional(idProfesional: Int): Profesional? = dbQuery {
+        Profesionales.select{Profesionales.idProfesional eq idProfesional}.map(::resultRowToProfesional).singleOrNull()
     }
 }

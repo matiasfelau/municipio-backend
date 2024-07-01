@@ -19,7 +19,7 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 fun Application.module() {
     configureSerialization()
     MySQLSingleton.init(environment.config)
-    val credencialService = CredencialService(environment.config)
+    val credencialService = CredencialService()
     val comercioService = ComercioService(environment.config)
     val credencialJWTService = CredencialJWTService(this, credencialService)
     val empleadoService = EmpleadoService(environment.config)
