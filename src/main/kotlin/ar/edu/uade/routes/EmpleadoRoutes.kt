@@ -23,6 +23,7 @@ fun Route.empleadoRouting(empleadoService: EmpleadoService, empleadoJWTService: 
             val token: String? = empleadoJWTService.createJwtToken(request)
             token?.let {
                 call.response.status(HttpStatusCode.OK)
+                println("token empleado: "+token)
                 call.respond(hashMapOf("token" to token))
             } ?: call.respond(message = HttpStatusCode.Unauthorized)
 

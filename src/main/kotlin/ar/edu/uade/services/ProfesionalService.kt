@@ -85,7 +85,7 @@ class ProfesionalService {
         val documento = dao.getProfesional(idProfesional)?.documento
         val credencial = documento?.let { credencialService.getDAO().findCredencialByDocumento(it) }
         if (credencial != null) {
-            sendEmail(credencial.email, "src/main/resources/email_template.html")
+            sendEmail(credencial.email, "src/main/resources/email_template3.html")
         }
         return dao.habilitarProfesional(idProfesional)
     }
