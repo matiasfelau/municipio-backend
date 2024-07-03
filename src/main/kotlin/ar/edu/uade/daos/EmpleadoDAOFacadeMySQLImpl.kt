@@ -4,6 +4,7 @@ import ar.edu.uade.models.Empleado
 import ar.edu.uade.models.Empleado.Personal
 import ar.edu.uade.databases.MySQLSingleton.dbQuery
 import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 
@@ -21,7 +22,7 @@ class EmpleadoDAOFacadeMySQLImpl : EmpleadoDAOFacade {
     )
 
     override suspend fun findEmpleadoByLegajo(legajo: Int): Empleado? = dbQuery {
-        Personal.select { Personal.legajo eq legajo }.map(::resultRowToPersonal).singleOrNull()
+        Personal.select{ (Personal.legajo eq legajo) and(Personal.categoria eq 8) }.map(::resultRowToPersonal).singleOrNull()
     }
 }
 
