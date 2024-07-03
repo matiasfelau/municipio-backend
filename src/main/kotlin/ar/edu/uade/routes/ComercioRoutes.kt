@@ -300,6 +300,55 @@ fun Route.comercioRouting(jwtService: JWTService, comercioService: ComercioServi
         }
     }
 
+    put("$ruta/propios/{documentoVecino}") {
+        var resultado: List<ComercioResponse> = ArrayList()
+        try {
+            val documentoVecino = call.parameters["documentoVecino"]!!
+            val autenticacion = call.receive<Autenticacion>()
+            println("AAAAAAAAAAAAAAAAAAAAAAAAAAA")
+            print("Documento Vecino: " + documentoVecino)
+            if (jwtService.validateToken(autenticacion.token)) {
+                resultado = comercioService.getComerciosByVecino(documentoVecino).map { comercioToResponse(it) }
+                call.response.status(HttpStatusCode.OK)
+                println(
+                    "\n--------------------" +
+                            "\nACTOR:COMERCIOS_VECINO" +
+                            "\nSTATUS:OK" +
+                            "\n--------------------" +
+                            "\nUSUARIO:${autenticacion.tipo}" +
+                            "\nTOKEN:${autenticacion.token}" +
+                            "\nDOCUMENTO_VECINO:${documentoVecino}" +
+                            "\n--------------------" +
+                            "\nRESULTADO:${resultado}" +
+                            "\n--------------------"
+                )
+            } else {
+                call.response.status(HttpStatusCode.Unauthorized)
+                println(
+                    "\n--------------------" +
+                            "\nACTOR:COMERCIOS_VECINO" +
+                            "\nSTATUS:UNAUTHORIZED" +
+                            "\n--------------------" +
+                            "\nUSUARIO:${autenticacion.tipo}" +
+                            "\nTOKEN:${autenticacion.token}" +
+                            "\nDOCUMENTO_VECINO:${documentoVecino}" +
+                            "\n--------------------"
+                )
+            }
+        } catch (exception: Exception) {
+            call.response.status(HttpStatusCode.InternalServerError)
+            println(
+                "\n--------------------" +
+                        "\nACTOR:COMERCIOS_VECINO" +
+                        "\nSTATUS:INTERNAL_SERVER_ERROR" +
+                        "\n--------------------" +
+                        "\nERROR:${exception.message}" +
+                        "\n--------------------"
+            )
+        }
+        call.respond(resultado)
+    }
+
     get(ruta+"/habilitar"+"/{idComercio}") {
         try {
             val idComercio = call.parameters["idComercio"]!!.toInt()
@@ -370,3 +419,5 @@ private fun comercioToResponse(d: Comercio): ComercioResponse{
         d.longitud
     )
 }
+
+

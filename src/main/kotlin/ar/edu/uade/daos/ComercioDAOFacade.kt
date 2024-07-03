@@ -14,4 +14,5 @@ interface ComercioDAOFacade {
     suspend fun getFotosById(id: Int): List<ComercioImagen>
     suspend fun getComercioByNomYDir(nombre: String, direccion: String): Comercio?
     suspend fun habilitarComercio(idComercio: Int): Boolean
+    suspend fun getComerciosByVecino(documentoVecino: String): List<Comercio>
 }

@@ -36,6 +36,7 @@ fun Application.module() {
     val denunciaService = DenunciaService(environment.config)
     val profesionalService = ProfesionalService()
     val movimientoDenunciaService = MovimientoDenunciaService()
+    val publicacionService = PublicacionService(environment.config)
     configureSecurity(credencialJWTService, empleadoJWTService)
     configureRouting(
         denunciaService,
@@ -54,7 +55,8 @@ fun Application.module() {
         documentoToken,
         movimientoReclamoService,
         movimientoDenunciaService,
-        profesionalService
+        profesionalService,
+        publicacionService
         )
     val serviceAccount = FileInputStream("src/main/resources/firebase/serviceAccountKey.json")
     val options = FirebaseOptions.builder()
@@ -114,3 +116,4 @@ suspend fun checkReclamoChanges(movimientoReclamoService: MovimientoReclamoServi
             }
         }
 }
+
