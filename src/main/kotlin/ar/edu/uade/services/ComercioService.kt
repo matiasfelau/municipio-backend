@@ -84,6 +84,10 @@ class ComercioService(config: ApplicationConfig) {
         return Int.MAX_VALUE
 
     }
+
+    suspend fun getComerciosByVecino(documentoVecino: String): List<Comercio> {
+        return dao.getComerciosByVecino(documentoVecino)
+    }
     suspend fun habilitarComercio(idComercio: Int): Boolean {
         val credencialService = CredencialService()
         val documento = dao.getComercioByID(idComercio)?.documento

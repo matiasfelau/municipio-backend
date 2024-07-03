@@ -99,4 +99,8 @@ class ComercioDAOFacadeMySQLImpl: ComercioDAOFacade {
             it[Comercios.autorizado] = true
         } > 0
     }
+    override suspend fun getComerciosByVecino(documentoVecino: String): List<Comercio> = dbQuery {
+        Comercios.select { Comercios.documento eq documentoVecino and (Comercios.autorizado eq true) }
+            .map(::resultRowToComercio)
+    }
 }
