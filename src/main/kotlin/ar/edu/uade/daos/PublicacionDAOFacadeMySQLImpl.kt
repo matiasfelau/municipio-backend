@@ -1,11 +1,13 @@
 package ar.edu.uade.daos
 
 import ar.edu.uade.databases.MySQLSingleton.dbQuery
+import ar.edu.uade.models.Profesional.Profesionales
 import ar.edu.uade.models.Publicacion
 import ar.edu.uade.models.Publicacion.Publicaciones
 import ar.edu.uade.models.PublicacionImagen
 import ar.edu.uade.utilities.Autenticacion
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class PublicacionDAOFacadeMySQLImpl : PublicacionDAOFacade {
@@ -48,7 +50,8 @@ class PublicacionDAOFacadeMySQLImpl : PublicacionDAOFacade {
             titulo = row[Publicaciones.titulo],
             descripcion = row[Publicaciones.descripcion],
             autor = row[Publicaciones.autor],
-            fecha = row[Publicaciones.fecha]
+            fecha = row[Publicaciones.fecha],
+            aprobado = row[Publicaciones.aprobado]
         )
 
     private fun rowToImagen(row: ResultRow): PublicacionImagen =
@@ -61,5 +64,11 @@ class PublicacionDAOFacadeMySQLImpl : PublicacionDAOFacade {
 
     override suspend fun getFotos(idPublicacion: Int): List<PublicacionImagen> = dbQuery{
         PublicacionImagen.PublicacionImagenes.select { PublicacionImagen.PublicacionImagenes.idPublicacion eq idPublicacion }.map(::rowToImagen)
+    }
+
+    override suspend fun aprobarPublicacion(idPublicacion: Int): Boolean = dbQuery {
+        Publicaciones.update({ Publicaciones.id eq idPublicacion }) {
+            it[Publicaciones.aprobado] = true
+        } > 0
     }
 }

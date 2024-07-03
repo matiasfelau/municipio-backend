@@ -42,6 +42,19 @@ fun Route.publicacionRouting(publicacionService: PublicacionService) {
                 call.respond(HttpStatusCode.InternalServerError, e.message ?: "Error al crear la publicación")
             }
         }
+
+        get("/aprobar-publicacion"+"/{id}") {
+            val id = call.parameters["id"]?.toIntOrNull()
+            try {
+                if (id != null) {
+                    publicacionService.aprobarPublicacion(id)
+                    call.respond(true)
+                } else
+                    call.respond(false)
+            } catch (e: Exception) {
+                call.respond(false)
+            }
+        }
     }
 }
 private fun convertToResponse( publicacion: Publicacion): PublicacionResponse {
@@ -50,8 +63,7 @@ private fun convertToResponse( publicacion: Publicacion): PublicacionResponse {
         titulo = publicacion.titulo,
         descripcion = publicacion.descripcion,
         autor = publicacion.autor,
-        fechaPublicacion = publicacion.fecha,
-        imagenes = publicacion.imagenes,
+        fechaPublicacion = publicacion.fecha
     )
 }
 

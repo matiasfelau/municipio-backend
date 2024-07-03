@@ -11,4 +11,5 @@ interface PublicacionDAOFacade {
     suspend fun nuevaPublicacion(titulo: String, descripcion: String, autor: String, fecha: String, autenticacion: Autenticacion): Publicacion?
     suspend fun subirFotos(foto: PublicacionImagen, id: Int)
     suspend fun getFotos(idPublicacion: Int): List<PublicacionImagen>
+    suspend fun aprobarPublicacion(idPublicacion: Int): Boolean
 }

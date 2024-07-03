@@ -3,6 +3,7 @@ package ar.edu.uade.services
 import ar.edu.uade.daos.PublicacionDAOFacade
 import ar.edu.uade.daos.PublicacionDAOFacadeMySQLImpl
 import ar.edu.uade.mappers.MapPublicacion
+import ar.edu.uade.mappers.MapPublicacionImagen
 import ar.edu.uade.models.Publicacion
 import ar.edu.uade.models.PublicacionImagen
 import ar.edu.uade.utilities.Autenticacion
@@ -16,7 +17,18 @@ class PublicacionService(config: ApplicationConfig) {
         val publicaciones = dao.get10Publicaciones(pagina);
         val lista : MutableList<MapPublicacion> = mutableListOf();
         for(publicacion in publicaciones){
-            val p: MapPublicacion = MapPublicacion(publicacion.id,publicacion.titulo, publicacion.descripcion, publicacion.autor, publicacion.fecha, dao.getFotos(publicacion.id))
+            val fotos = dao.getFotos(publicacion.id)
+            val f: MutableList<MapPublicacionImagen> = mutableListOf()
+            for (foto in fotos){
+                f.add(MapPublicacionImagen(foto.idPublicacion,foto.url,foto.idPublicacion))
+            }
+            val p: MapPublicacion = MapPublicacion(
+                publicacion.id,
+                publicacion.titulo,
+                publicacion.descripcion,
+                publicacion.autor,
+                publicacion.fecha,
+                f)
             lista.add(p);
         }
         return lista;
@@ -48,5 +60,9 @@ class PublicacionService(config: ApplicationConfig) {
         }
         return publicacion
 
+    }
+
+    suspend fun aprobarPublicacion(id: Int) {
+        dao.aprobarPublicacion(id)
     }
 }

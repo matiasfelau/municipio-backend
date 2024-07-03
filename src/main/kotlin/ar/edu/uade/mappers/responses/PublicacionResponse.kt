@@ -12,6 +12,5 @@ class PublicacionResponse(
     val titulo: String,
     val descripcion: String,
     val autor: String,
-    val fechaPublicacion: String,
-    val imagenes: List<String>?
+    val fechaPublicacion: String
 )

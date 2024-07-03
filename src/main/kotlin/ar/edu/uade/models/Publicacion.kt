@@ -10,7 +10,8 @@ data class Publicacion(
     val descripcion: String,
     val autor: String,
     @kotlinx.serialization.Serializable(with = LocalTimeComponentSerializer::class)
-    val fecha: String
+    val fecha: String,
+    val aprobado: Boolean
 ) : Serializable {
     public object Publicaciones : Table() {
         val id = integer("id").autoIncrement()
@@ -18,6 +19,7 @@ data class Publicacion(
         val descripcion = text("descripcion")
         val autor = varchar("autor", 255)
         val fecha = varchar("fecha", 255)
+        val aprobado = bool("aprobado")
         override val primaryKey = PrimaryKey(id)
     }
 }
