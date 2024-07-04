@@ -105,7 +105,7 @@ suspend fun checkReclamoChanges(movimientoReclamoService: MovimientoReclamoServi
                 val reclamo = reclamoService.getReclamoById(change.idReclamo)
                 if (reclamo != null) {
                     println(reclamo.documento)
-                    val token = documentoTokenService.getToken(reclamo.documento)?.token
+                    val token = reclamo.documento?.let { documentoTokenService.getToken(it)?.token }
                     if (token != null) {
                         sendNotificationToDevice(
                             token,

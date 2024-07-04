@@ -215,36 +215,42 @@ fun Route.denunciaRouting(jwtService: JWTService, denunciaService: DenunciaServi
             denunciaContainer.denuncia.estado = "Nuevo"
             val vecinoDenunciado = requestToVecinoDenunciado(denunciaContainer.vecinoDenunciado)
             //implementacion de busqueda de denunciado
-            vecinoDenunciado.documento = vecinoService.getVecinoSegunNomApDir(vecinoDenunciado.nombre, vecinoDenunciado.apellido, vecinoDenunciado.direccion)?.documento
-            if (jwtService.validateToken(autenticacion.token)) {
-                result = denunciaService.addDenunciaVecino(
-                    requestToDenuncia(denunciaContainer.denuncia),
-                    vecinoDenunciado
-                )
-                val files = denunciaContainer.denuncia.fileStrings!!
-                for(file in files){
-                    if (result != null) {
-                        result.idDenuncia?.let { it1 -> denunciaService.addFileToDenuncia(it1,file,cloudinaryConfig) }
+            val v = vecinoService.getVecinoSegunNomApDir(vecinoDenunciado.nombre, vecinoDenunciado.apellido, vecinoDenunciado.direccion)
+            if (v != null) {
+                vecinoDenunciado.documento = v.documento
+                if (jwtService.validateToken(autenticacion.token)) {
+                    result = denunciaService.addDenunciaVecino(
+                        requestToDenuncia(denunciaContainer.denuncia),
+                        vecinoDenunciado
+                    )
+                    val files = denunciaContainer.denuncia.fileStrings!!
+                    for(file in files){
+                        if (result != null) {
+                            result.idDenuncia?.let { it1 -> denunciaService.addFileToDenuncia(it1,file,cloudinaryConfig) }
+                        }
                     }
-                }
 
-                call.response.status(HttpStatusCode.Created)
-                println(
-                    "\n--------------------" +
-                            "\nSTATUS:DENUNCIA CREATED" +
-                            "\n--------------------"
-                )
-                if (result != null) {
-                    call.respond(denunciaToResponse(result))
+                    call.response.status(HttpStatusCode.Created)
+                    println(
+                        "\n--------------------" +
+                                "\nSTATUS:DENUNCIA CREATED" +
+                                "\n--------------------"
+                    )
+                    if (result != null) {
+                        call.respond(denunciaToResponse(result))
+                    }
+                } else {
+                    call.response.status(HttpStatusCode.Unauthorized)
+                    println(
+                        "\n--------------------" +
+                                "\nSTATUS:DENUNCIA UNAUTHORIZED" +
+                                "\n--------------------"
+                    )
                 }
             } else {
-                call.response.status(HttpStatusCode.Unauthorized)
-                println(
-                    "\n--------------------" +
-                            "\nSTATUS:DENUNCIA UNAUTHORIZED" +
-                            "\n--------------------"
-                )
+                call.response.status(HttpStatusCode.BadRequest)
             }
+
         } catch (exposedSQLException: ExposedSQLException) {
             call.response.status(HttpStatusCode.BadRequest)
             println(

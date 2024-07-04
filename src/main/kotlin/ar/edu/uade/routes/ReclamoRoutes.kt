@@ -124,6 +124,7 @@ fun Route.reclamoRouting(jwtService: JWTService, reclamoService: ReclamoService,
             val request = call.receive<AutenticacionReclamo>()
             val autenticacion = request.autenticacion
             val reclamoRQ = request.reclamo
+            println(reclamoRQ.documento)
             if (jwtService.validateToken(autenticacion.token)) {
                 result = reclamoService.createReclamo(requestToReclamo(reclamoRQ))
                 call.response.status(HttpStatusCode.Created)
