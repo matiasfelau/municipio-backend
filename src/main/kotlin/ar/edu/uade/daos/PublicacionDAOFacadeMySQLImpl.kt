@@ -1,6 +1,7 @@
 package ar.edu.uade.daos
 
 import ar.edu.uade.databases.MySQLSingleton.dbQuery
+import ar.edu.uade.models.ComercioImagen.Comerciomagenes
 import ar.edu.uade.models.Profesional.Profesionales
 import ar.edu.uade.models.Publicacion
 import ar.edu.uade.models.Publicacion.Publicaciones
@@ -27,7 +28,10 @@ class PublicacionDAOFacadeMySQLImpl : PublicacionDAOFacade {
         Publicaciones.selectAll().count().toInt()
     }
 
-    override suspend fun nuevaPublicacion(titulo: String, descripcion: String, autor: String, fecha: String, autenticacion: Autenticacion): Publicacion? = dbQuery {
+    override suspend fun nuevaPublicacion(titulo: String,
+                                          descripcion: String,
+                                          autor: String,
+                                          fecha: String): Publicacion? = dbQuery {
         val insertStatement = Publicaciones.insert {
             it[Publicaciones.titulo] = titulo
             it[Publicaciones.descripcion] = descripcion
@@ -70,5 +74,13 @@ class PublicacionDAOFacadeMySQLImpl : PublicacionDAOFacade {
         Publicaciones.update({ Publicaciones.id eq idPublicacion }) {
             it[Publicaciones.aprobado] = true
         } > 0
+    }
+
+    override suspend fun addFotoPublicacion(urlImagen: String, id: Int): PublicacionImagen? = dbQuery {
+        val insertStatement = PublicacionImagen.PublicacionImagenes.insert {
+            it[PublicacionImagen.PublicacionImagenes.url] = urlImagen
+            it[PublicacionImagen.PublicacionImagenes.idPublicacion] = id
+        }
+        insertStatement.resultedValues?.singleOrNull()?.let(::rowToImagen)
     }
 }

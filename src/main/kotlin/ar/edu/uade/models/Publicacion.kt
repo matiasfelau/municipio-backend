@@ -9,7 +9,6 @@ data class Publicacion(
     val titulo: String,
     val descripcion: String,
     val autor: String,
-    @kotlinx.serialization.Serializable(with = LocalTimeComponentSerializer::class)
     val fecha: String,
     val aprobado: Boolean
 ) : Serializable {

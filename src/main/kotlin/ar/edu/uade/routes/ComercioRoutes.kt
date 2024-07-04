@@ -305,7 +305,6 @@ fun Route.comercioRouting(jwtService: JWTService, comercioService: ComercioServi
         try {
             val documentoVecino = call.parameters["documentoVecino"]!!
             val autenticacion = call.receive<Autenticacion>()
-            println("AAAAAAAAAAAAAAAAAAAAAAAAAAA")
             print("Documento Vecino: " + documentoVecino)
             if (jwtService.validateToken(autenticacion.token)) {
                 resultado = comercioService.getComerciosByVecino(documentoVecino).map { comercioToResponse(it) }

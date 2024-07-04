@@ -7,7 +7,10 @@ import ar.edu.uade.mappers.MapPublicacionImagen
 import ar.edu.uade.models.Publicacion
 import ar.edu.uade.models.PublicacionImagen
 import ar.edu.uade.utilities.Autenticacion
+import ar.edu.uade.utilities.CloudinaryConfig
+import com.cloudinary.utils.ObjectUtils
 import io.ktor.server.config.*
+import java.util.*
 import kotlin.math.ceil
 
 class PublicacionService(config: ApplicationConfig) {
@@ -18,12 +21,11 @@ class PublicacionService(config: ApplicationConfig) {
         val lista : MutableList<MapPublicacion> = mutableListOf();
         for(publicacion in publicaciones){
             val fotos = dao.getFotos(publicacion.id)
-            val f: MutableList<MapPublicacionImagen> = mutableListOf()
+            val f: MutableList<String> = mutableListOf()
             for (foto in fotos){
-                f.add(MapPublicacionImagen(foto.idPublicacion,foto.url,foto.idPublicacion))
+                f.add(foto.url)
             }
             val p: MapPublicacion = MapPublicacion(
-                publicacion.id,
                 publicacion.titulo,
                 publicacion.descripcion,
                 publicacion.autor,
@@ -44,19 +46,26 @@ class PublicacionService(config: ApplicationConfig) {
         return ceil(resultado).toInt()
     }
 
-    suspend fun nuevaPublicacion(p: MapPublicacion, autenticacion: Autenticacion): Publicacion? {
+    suspend fun nuevaPublicacion(p: MapPublicacion, cloudinaryConfig: CloudinaryConfig): Publicacion? {
         val publicacion = dao.nuevaPublicacion(
             p.titulo,
             p.descripcion,
             p.autor,
-            p.fecha,
-            autenticacion,
+            p.fecha
 
         )
-        for(s in p.fotos) {
-            if (publicacion != null) {
-                dao.subirFotos(PublicacionImagen(null, s.url, publicacion.id), publicacion.id)
-            };
+        if (publicacion != null){
+            val idPublicacion: Int = publicacion.id
+            println(p.fotos.get(0))
+            for (image in p.fotos){
+                val imageBytes = Base64.getDecoder().decode(image)
+                val uploadResult = cloudinaryConfig.cloudinary.uploader().upload(imageBytes, ObjectUtils.emptyMap())
+                val imageUrl = uploadResult["url"] as String
+                dao.addFotoPublicacion(
+                    imageUrl,
+                    idPublicacion
+                )
+            }
         }
         return publicacion
 
