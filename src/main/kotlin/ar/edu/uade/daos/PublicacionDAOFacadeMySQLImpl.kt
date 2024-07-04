@@ -13,7 +13,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 class PublicacionDAOFacadeMySQLImpl : PublicacionDAOFacade {
     override suspend fun get10Publicaciones(pagina: Int): List<Publicacion> = dbQuery {
-        Publicaciones.selectAll()
+        Publicaciones.select{Publicaciones.aprobado eq true}
             .limit(10, offset = ((pagina - 1) * 10).toLong())
             .map { rowToPublicacion(it) }
     }
