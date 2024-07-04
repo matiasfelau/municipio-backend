@@ -3,10 +3,7 @@ package ar.edu.uade.services
 import ar.edu.uade.daos.PublicacionDAOFacade
 import ar.edu.uade.daos.PublicacionDAOFacadeMySQLImpl
 import ar.edu.uade.mappers.MapPublicacion
-import ar.edu.uade.mappers.MapPublicacionImagen
 import ar.edu.uade.models.Publicacion
-import ar.edu.uade.models.PublicacionImagen
-import ar.edu.uade.utilities.Autenticacion
 import ar.edu.uade.utilities.CloudinaryConfig
 import com.cloudinary.utils.ObjectUtils
 import io.ktor.server.config.*
@@ -20,10 +17,12 @@ class PublicacionService(config: ApplicationConfig) {
         val publicaciones = dao.get10Publicaciones(pagina);
         val lista : MutableList<MapPublicacion> = mutableListOf();
         for(publicacion in publicaciones){
-            val fotos = dao.getFotos(publicacion.id)
+            val fotos = publicacion.id?.let { dao.getFotos(it) }
             val f: MutableList<String> = mutableListOf()
-            for (foto in fotos){
-                f.add(foto.url)
+            if (fotos != null) {
+                for (foto in fotos){
+                    f.add(foto.url)
+                }
             }
             val p: MapPublicacion = MapPublicacion(
                 publicacion.titulo,
@@ -52,19 +51,19 @@ class PublicacionService(config: ApplicationConfig) {
             p.descripcion,
             p.autor,
             p.fecha
-
         )
         if (publicacion != null){
-            val idPublicacion: Int = publicacion.id
-            println(p.fotos.get(0))
-            for (image in p.fotos){
+            val idPublicacion: Int? = publicacion.id
+            for (image in p.imageUris){
                 val imageBytes = Base64.getDecoder().decode(image)
                 val uploadResult = cloudinaryConfig.cloudinary.uploader().upload(imageBytes, ObjectUtils.emptyMap())
                 val imageUrl = uploadResult["url"] as String
-                dao.addFotoPublicacion(
-                    imageUrl,
-                    idPublicacion
-                )
+                if (idPublicacion != null) {
+                    dao.addFotoPublicacion(
+                        imageUrl,
+                        idPublicacion
+                    )
+                }
             }
         }
         return publicacion

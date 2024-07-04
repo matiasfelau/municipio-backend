@@ -1,6 +1,5 @@
 package ar.edu.uade.mappers
 
-import ar.edu.uade.models.PublicacionImagen
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -9,5 +8,5 @@ data class MapPublicacion(
     val descripcion: String,
     val autor: String,
     val fecha: String,
-    val fotos: List<String>
+    val imageUris: List<String>
 )

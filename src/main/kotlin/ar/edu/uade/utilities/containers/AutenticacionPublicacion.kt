@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AutenticacionPublicacion (
-    val autenticacion: Autenticacion,
-    val publicacion: MapPublicacion
+    val publicacion: MapPublicacion,
+    val autenticacion: Autenticacion
+
 )

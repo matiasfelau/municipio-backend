@@ -40,6 +40,7 @@ class PublicacionDAOFacadeMySQLImpl : PublicacionDAOFacade {
             it[Publicaciones.descripcion] = descripcion
             it[Publicaciones.autor] = autor
             it[Publicaciones.fecha] = fecha
+            it[Publicaciones.aprobado]=false
         }
         insertStatement.resultedValues?.singleOrNull()?.let (::rowToPublicacion)
     }
