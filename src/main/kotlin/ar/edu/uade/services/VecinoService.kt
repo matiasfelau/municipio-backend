@@ -13,7 +13,8 @@ class VecinoService(config: ApplicationConfig) {
     }
 
     suspend fun getVecinoSegunNomApDir(nombre: String,apellido: String, direccion: String):Vecino?{
-        return vecinoDAO.getVecinoSegunNomApDir(nombre,apellido,direccion)
+        val vecino = vecinoDAO.getVecinoSegunNomApDir(nombre,apellido,direccion)
+        return vecino
     }
 
 }

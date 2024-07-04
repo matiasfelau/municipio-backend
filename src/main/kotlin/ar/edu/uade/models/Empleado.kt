@@ -21,7 +21,7 @@ data class Empleado(
         val legajo = integer("legajo").autoIncrement()
         val nombre = varchar("nombre", 150)
         val apellido = varchar("apellido", 150)
-        val documento = varchar("documento", 40)
+        val documento = varchar("documento", 40).uniqueIndex()
         val password = varchar("password", 40)
         val sector = varchar("sector", 200)
         val categoria = integer("categoria")

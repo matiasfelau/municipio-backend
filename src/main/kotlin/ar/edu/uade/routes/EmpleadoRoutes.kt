@@ -37,7 +37,7 @@ fun Route.empleadoRouting(empleadoService: EmpleadoService, empleadoJWTService: 
             val legajo = Integer.parseInt(call.parameters["legajo"])
             val db = empleadoService.findEmpleadoByLegajo(legajo)
             if (db != null) {
-                println(db.categoria)
+                println(db.documento)
             }
             db?.let { it1 -> empleadoToResponse(it1) }?.let { it2 -> call.respond(it2) }
         } catch (_: Exception) {
@@ -53,6 +53,7 @@ private fun empleadoToResponse(empleado: Empleado): EmpleadoResponse {
         empleado.legajo,
         empleado.nombre,
         empleado.apellido,
+        empleado.documento,
         empleado.password,
         empleado.sector
     )

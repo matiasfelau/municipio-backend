@@ -26,6 +26,6 @@ class VecinoDAOFacadeMySQLImpl : VecinoDAOFacade {
     }
 
     override suspend fun getVecinoSegunNomApDir(nombre: String, apellido: String, direccion: String): Vecino?  = dbQuery {
-        Vecinos.select { Vecinos.nombre like nombre and(Vecinos.apellido like apellido and(Vecinos.direccion like direccion)) }.map(::resultRowToVecino).singleOrNull()
+        Vecinos.select { Vecinos.nombre match nombre and(Vecinos.apellido match apellido and(Vecinos.direccion match direccion)) }.map(::resultRowToVecino).singleOrNull()
     }
 }
