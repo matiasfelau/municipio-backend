@@ -42,6 +42,6 @@ fun Application.configureRouting(
         denunciaRouting(jwtService,denunciaService,vecinoService,comercioService,movimientoDenunciaService,cloudinaryConfig)
         profesionalRouting(profesionalService, jwtService, cloudinaryConfig)
         comercioRouting(jwtService,comercioService,cloudinaryConfig)
-        publicacionRouting(publicacionService)
+        publicacionRouting(jwtService,publicacionService, cloudinaryConfig)
     }
 }

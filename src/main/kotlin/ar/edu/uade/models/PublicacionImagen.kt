@@ -11,7 +11,7 @@ data class PublicacionImagen (
 ): Serializable{
     object PublicacionImagenes: Table(){
         val id = integer("id").autoIncrement();
-        val url = text("url");
+        val url = varchar("url", 255);
         val idPublicacion = integer("idPublicacion").references((Publicacion.Publicaciones.id));
         override val primaryKey = PrimaryKey(id);
     }

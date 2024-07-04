@@ -4,6 +4,7 @@ import ar.edu.uade.mappers.MapPublicacion
 import ar.edu.uade.mappers.responses.PublicacionResponse
 import ar.edu.uade.models.Publicacion
 import ar.edu.uade.models.PublicacionImagen
+import ar.edu.uade.services.JWTService
 import ar.edu.uade.services.PublicacionService
 import ar.edu.uade.utilities.Autenticacion
 import ar.edu.uade.utilities.containers.AutenticacionPublicacion
@@ -12,8 +13,10 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import ar.edu.uade.utilities.CloudinaryConfig
+import org.jetbrains.exposed.exceptions.ExposedSQLException
 
-fun Route.publicacionRouting(publicacionService: PublicacionService) {
+fun Route.publicacionRouting(jwtService: JWTService, publicacionService: PublicacionService, cloudinaryConfig: CloudinaryConfig) {
     route("/publicaciones") {
         put("/{pagina}") {
             println("ADENTRO PUBLICACIONES")
@@ -32,18 +35,54 @@ fun Route.publicacionRouting(publicacionService: PublicacionService) {
         }
 
         post("/nuevaPublicacion") {
-            val body = call.receive<AutenticacionPublicacion>();
-            val publicacion = body.publicacion;
-            val autenticacion = body.autenticacion;
+            var resultado: Publicacion?
             try {
-                val nuevaPublicacion = publicacionService.nuevaPublicacion(publicacion, autenticacion)
-                nuevaPublicacion?.let { it1 -> convertToResponse(it1) }?.let { it2 -> call.respond(it2) }
-            } catch (e: IllegalStateException) {
-                call.respond(HttpStatusCode.InternalServerError, e.message ?: "Error al crear la publicación")
+                val body = call.receive<AutenticacionPublicacion>();
+                val publicacion = body.publicacion;
+                val autenticacion = body.autenticacion;
+                println("Autenticacion y Publicacion Separados...")
+                if (jwtService.validateToken(autenticacion.token)) {
+                    resultado = publicacionService.nuevaPublicacion(publicacion, cloudinaryConfig)
+                    call.response.status(HttpStatusCode.Created)
+                    println(
+                        "\n--------------------" +
+                                "\nSTATUS:COMERCIO CREATED" +
+                                "\n--------------------"
+                    )
+                    if (resultado != null) {
+                        call.respond(convertToResponse(resultado))
+                    }
+                } else {
+                    call.response.status(HttpStatusCode.Unauthorized)
+                    println(
+                        "\n--------------------" +
+                                "\nSTATUS:PUBLICACION UNAUTHORIZED" +
+                                "\n--------------------"
+                    )
+                }
+            } catch (exposedSQLException: ExposedSQLException) {
+                call.response.status(HttpStatusCode.BadRequest)
+                println(
+                    "\n--------------------" +
+                            "\nSTATUS:PUBLICACION BAD REQUEST" +
+                            "\n--------------------"
+                )
+                exposedSQLException.printStackTrace()
+            } catch (exception: Exception) {
+                call.response.status(HttpStatusCode.InternalServerError)
+                println(
+                    "\n--------------------" +
+                            "\nSTATUS:PUBLICACION INTERNAL SERVER ERROR" +
+                            "\n--------------------"
+                )
+                exception.printStackTrace()
             }
         }
 
-        get("/aprobar-publicacion"+"/{id}") {
+
+
+
+        get("/aprobar-publicacion" + "/{id}") {
             val id = call.parameters["id"]?.toIntOrNull()
             try {
                 if (id != null) {
@@ -55,9 +94,11 @@ fun Route.publicacionRouting(publicacionService: PublicacionService) {
                 call.respond(false)
             }
         }
+
     }
+
 }
-private fun convertToResponse( publicacion: Publicacion): PublicacionResponse {
+private fun convertToResponse(publicacion: Publicacion): PublicacionResponse {
     return PublicacionResponse(
         id = publicacion.id,
         titulo = publicacion.titulo,
