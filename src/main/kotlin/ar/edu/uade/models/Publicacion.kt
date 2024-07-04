@@ -5,7 +5,7 @@ import org.jetbrains.exposed.sql.Table
 import java.io.Serializable
 
 data class Publicacion(
-    val id: Int,
+    val id: Int?,
     val titulo: String,
     val descripcion: String,
     val autor: String,

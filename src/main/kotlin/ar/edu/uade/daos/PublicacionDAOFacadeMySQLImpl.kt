@@ -25,7 +25,10 @@ class PublicacionDAOFacadeMySQLImpl : PublicacionDAOFacade {
     }
 
     override suspend fun getAllCantidadPaginas(): Int = dbQuery {
-        Publicaciones.selectAll().count().toInt()
+        Publicaciones.select{Publicaciones.aprobado eq true }
+            .map(::rowToPublicacion)
+            .count()
+
     }
 
     override suspend fun nuevaPublicacion(titulo: String,
@@ -38,7 +41,7 @@ class PublicacionDAOFacadeMySQLImpl : PublicacionDAOFacade {
             it[Publicaciones.autor] = autor
             it[Publicaciones.fecha] = fecha
         }
-        insertStatement.resultedValues?.singleOrNull()?.let { rowToPublicacion(it) }
+        insertStatement.resultedValues?.singleOrNull()?.let (::rowToPublicacion)
     }
 
     override suspend fun subirFotos(foto: PublicacionImagen, id: Int) {
@@ -48,8 +51,7 @@ class PublicacionDAOFacadeMySQLImpl : PublicacionDAOFacade {
         }
     }
 
-    private fun rowToPublicacion(row: ResultRow): Publicacion =
-        Publicacion(
+    private fun rowToPublicacion(row: ResultRow) = Publicacion(
             id = row[Publicaciones.id],
             titulo = row[Publicaciones.titulo],
             descripcion = row[Publicaciones.descripcion],
@@ -58,8 +60,7 @@ class PublicacionDAOFacadeMySQLImpl : PublicacionDAOFacade {
             aprobado = row[Publicaciones.aprobado]
         )
 
-    private fun rowToImagen(row: ResultRow): PublicacionImagen =
-        PublicacionImagen(
+    private fun rowToImagen(row: ResultRow): PublicacionImagen = PublicacionImagen(
             id = row[PublicacionImagen.PublicacionImagenes.id],
             url = row[PublicacionImagen.PublicacionImagenes.url],
             idPublicacion = row[PublicacionImagen.PublicacionImagenes.idPublicacion],
@@ -67,7 +68,8 @@ class PublicacionDAOFacadeMySQLImpl : PublicacionDAOFacade {
         )
 
     override suspend fun getFotos(idPublicacion: Int): List<PublicacionImagen> = dbQuery{
-        PublicacionImagen.PublicacionImagenes.select { PublicacionImagen.PublicacionImagenes.idPublicacion eq idPublicacion }.map(::rowToImagen)
+        PublicacionImagen.PublicacionImagenes.select { PublicacionImagen.PublicacionImagenes.idPublicacion eq idPublicacion }
+            .map(::rowToImagen)
     }
 
     override suspend fun aprobarPublicacion(idPublicacion: Int): Boolean = dbQuery {
