@@ -64,7 +64,7 @@ dependencies {
 
     //notis
     implementation("com.google.firebase:firebase-admin:9.0.0") {
-        exclude group: 'com.google.guava', module: 'listenablefuture'
+        exclude(group = "com.google.guava", module = "listenablefuture")
     } // check for the latest version
 
 
